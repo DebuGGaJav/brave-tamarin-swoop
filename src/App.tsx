@@ -11,6 +11,9 @@ import SayilarPage from "./pages/sayilar";
 import SekillerPage from "./pages/sekiller";
 import EsitlikPage from "./pages/esitlik";
 import ProblemCozmePage from "./pages/problem-cozme";
+import TeacherDashboard from "@/components/TeacherDashboard";
+import MultiplayerGame from "@/components/MultiplayerGame";
+import AchievementSystem from "@/components/AchievementSystem";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +31,9 @@ const App = () => (
           <Route path="/sekiller" element={<SekillerPage />} />
           <Route path="/esitlik" element={<EsitlikPage />} />
           <Route path="/problem-cozme" element={<ProblemCozmePage />} />
+          <Route path="/teacher" element={<TeacherDashboard />} />
+          <Route path="/multiplayer" element={<MultiplayerGame />} />
+          <Route path="/achievements" element={<AchievementSystem />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
