@@ -85,87 +85,89 @@ const AchievementSystem: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-purple-600 mb-2">Başarılar</h1>
-        <p className="text-gray-600">Kazandığın rozetler ve ilerleme</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-8 sm:mb-10">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-purple-600 mb-2">Başarılar</h1>
+          <p className="text-lg sm:text-xl text-gray-600">Kazandığın rozetler ve ilerleme</p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {achievements.map((achievement) => (
-          <Card 
-            key={achievement.id}
-            className={`relative transition-all duration-300 ${
-              achievement.unlocked 
-                ? getRarityColor(achievement) + " border-2" 
-                : "opacity-75"
-            } ${showNewAchievement === achievement.id ? "animate-bounce" : ""}`}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <div className={`p-2 rounded-full ${
-                  achievement.unlocked ? "bg-white" : "bg-gray-100"
-                }`}>
-                  {achievement.icon}
-                </div>
-                {achievement.unlocked && (
-                  <div className="text-xs bg-green-500 text-white px-2 py-1 rounded-full">
-                    Açıldı!
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {achievements.map((achievement) => (
+            <Card 
+              key={achievement.id}
+              className={`relative transition-all duration-300 ${
+                achievement.unlocked 
+                  ? getRarityColor(achievement) + " border-2" 
+                  : "opacity-75"
+              } ${showNewAchievement === achievement.id ? "animate-bounce" : ""}`}
+            >
+              <CardContent className="p-4 sm:p-5">
+                <div className="flex items-center justify-between mb-2">
+                  <div className={`p-2 rounded-full ${
+                    achievement.unlocked ? "bg-white" : "bg-gray-100"
+                  }`}>
+                    {achievement.icon}
                   </div>
-                )}
-              </div>
-              
-              <h3 className="font-bold text-sm mb-1">{achievement.name}</h3>
-              <p className="text-xs text-gray-600 mb-2">{achievement.description}</p>
-              
-              <div className="space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span>İlerleme</span>
-                  <span>{achievement.progress}/{achievement.maxProgress}</span>
+                  {achievement.unlocked && (
+                    <div className="text-xs bg-green-500 text-white px-2 py-1 rounded-full">
+                      Açıldı!
+                    </div>
+                  )}
                 </div>
-                <Progress 
-                  value={(achievement.progress / achievement.maxProgress) * 100} 
-                  className="h-1"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                
+                <h3 className="font-bold text-base sm:text-lg mb-1">{achievement.name}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 mb-2">{achievement.description}</p>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs sm:text-sm">
+                    <span>İlerleme</span>
+                    <span>{achievement.progress}/{achievement.maxProgress}</span>
+                  </div>
+                  <Progress 
+                    value={(achievement.progress / achievement.maxProgress) * 100} 
+                    className="h-1 sm:h-2"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle className="text-center">İstatistikler</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-purple-600">
-                {achievements.filter(a => a.unlocked).length}
+        <Card className="mt-8 shadow-xl border-2 border-purple-200">
+          <CardHeader>
+            <CardTitle className="text-center text-xl sm:text-2xl text-purple-600">İstatistikler</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
+              <div>
+                <div className="text-2xl sm:text-3xl font-bold text-purple-600">
+                  {achievements.filter(a => a.unlocked).length}
+                </div>
+                <div className="text-sm sm:text-base text-gray-600">Açılan Rozet</div>
               </div>
-              <div className="text-sm text-gray-600">Açılan Rozet</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-blue-600">
-                {achievements.reduce((acc, a) => acc + a.progress, 0)}
+              <div>
+                <div className="text-2xl sm:text-3xl font-bold text-blue-600">
+                  {achievements.reduce((acc, a) => acc + a.progress, 0)}
+                </div>
+                <div className="text-sm sm:text-base text-gray-600">Toplam İlerleme</div>
               </div>
-              <div className="text-sm text-gray-600">Toplam İlerleme</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {Math.round((achievements.filter(a => a.unlocked).length / achievements.length) * 100)}%
+              <div>
+                <div className="text-2xl sm:text-3xl font-bold text-green-600">
+                  {Math.round((achievements.filter(a => a.unlocked).length / achievements.length) * 100)}%
+                </div>
+                <div className="text-sm sm:text-base text-gray-600">Tamamlanma</div>
               </div>
-              <div className="text-sm text-gray-600">Tamamlanma</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-yellow-600">
-                {achievements.filter(a => !a.unlocked).length}
+              <div>
+                <div className="text-2xl sm:text-3xl font-bold text-yellow-600">
+                  {achievements.filter(a => !a.unlocked).length}
+                </div>
+                <div className="text-sm sm:text-base text-gray-600">Kilitli Rozet</div>
               </div>
-              <div className="text-sm text-gray-600">Kilitli Rozet</div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
