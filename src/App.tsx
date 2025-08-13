@@ -15,6 +15,7 @@ import TeacherDashboard from "@/components/TeacherDashboard";
 import MultiplayerGame from "@/components/MultiplayerGame";
 import AchievementSystem from "@/components/AchievementSystem";
 import ProfilePage from "./pages/Profile";
+import CarpmaPage from "./pages/CarpmaPage"; // CarpmaPage'i import et
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/toplama" element={<ToplamaPage />} />
           <Route path="/cikarma" element={<CikarmaPage />} />
+          <Route path="/carpma" element={<CarpmaPage />} /> {/* Yeni çarpma rotasını ekle */}
           <Route path="/sayilar" element={<SayilarPage />} />
           <Route path="/sekiller" element={<SekillerPage />} />
           <Route path="/esitlik" element={<EsitlikPage />} />
