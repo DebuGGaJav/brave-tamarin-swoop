@@ -113,56 +113,56 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <div className="mb-6">
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="mb-4 sm:mb-6">
             <MathCharacter 
               mood={characterMood} 
               message="Merhaba! Matematik dünyasına hoş geldin!"
             />
           </div>
           
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 flex items-center justify-center">
-            <Sparkles className="w-10 h-10 mr-3 text-yellow-500" />
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 sm:mb-4 flex items-center justify-center">
+            <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 mr-2 sm:mr-3 text-yellow-500" />
             Matematik Dünyası
-            <Sparkles className="w-10 h-10 ml-3 text-yellow-500" />
+            <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 ml-2 sm:ml-3 text-yellow-500" />
           </h1>
-          <p className="text-2xl text-gray-600 mb-6">
+          <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-4 sm:mb-6">
             1. Sınıf Matematik Eğlencesi
           </p>
           <div className="flex justify-center">
-            <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-4 rounded-full shadow-lg">
-              <Trophy className="w-10 h-10 text-white animate-bounce" />
+            <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-3 sm:p-4 rounded-full shadow-lg">
+              <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-white animate-bounce" />
             </div>
           </div>
         </div>
 
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-purple-600 mb-8 text-center">Matematik Konuları</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-purple-600 mb-6 sm:mb-8 text-center">Matematik Konuları</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {topics.map((topic, index) => (
               <Card 
                 key={index} 
                 className={`group transition-all duration-300 bg-white border-2 ${topic.borderColor} hover:shadow-2xl hover:scale-105 transform`}
               >
-                <CardHeader className="pb-4">
-                  <div className="flex justify-center mb-4">
-                    <div className={`p-4 rounded-full ${topic.color} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                <CardHeader className="pb-3 sm:pb-4">
+                  <div className="flex justify-center mb-3 sm:mb-4">
+                    <div className={`p-3 sm:p-4 rounded-full ${topic.color} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                       {topic.icon}
                     </div>
                   </div>
-                  <CardTitle className="text-center text-xl font-bold bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent">
+                  <CardTitle className="text-center text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent">
                     {topic.title}
                   </CardTitle>
-                  <CardDescription className="text-center text-gray-600 font-medium">
+                  <CardDescription className="text-center text-sm sm:text-base text-gray-600 font-medium">
                     {topic.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex justify-center pt-0">
                   <Button 
                     onClick={() => handleStart(topic.path)}
-                    className={`${topic.color} ${topic.hoverColor} text-white font-bold px-8 py-3 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105`}
+                    className={`${topic.color} ${topic.hoverColor} text-white font-bold px-6 py-2 sm:px-8 sm:py-3 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105`}
                   >
                     Başla
                   </Button>
@@ -172,31 +172,31 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-purple-600 mb-8 text-center">Özel Özellikler</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-purple-600 mb-6 sm:mb-8 text-center">Özel Özellikler</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {specialFeatures.map((feature, index) => (
               <Card 
                 key={index} 
                 className={`group transition-all duration-300 bg-white border-2 ${feature.borderColor} hover:shadow-2xl hover:scale-105 transform`}
               >
-                <CardHeader className="pb-4">
-                  <div className="flex justify-center mb-4">
-                    <div className={`p-4 rounded-full ${feature.color} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                <CardHeader className="pb-3 sm:pb-4">
+                  <div className="flex justify-center mb-3 sm:mb-4">
+                    <div className={`p-3 sm:p-4 rounded-full ${feature.color} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                       {feature.icon}
                     </div>
                   </div>
-                  <CardTitle className="text-center text-xl font-bold bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
+                  <CardTitle className="text-center text-lg sm:text-xl font-bold bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
                     {feature.title}
                   </CardTitle>
-                  <CardDescription className="text-center text-gray-600 font-medium">
+                  <CardDescription className="text-center text-sm sm:text-base text-gray-600 font-medium">
                     {feature.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex justify-center pt-0">
                   <Button 
                     onClick={() => handleStart(feature.path)}
-                    className={`${feature.color} ${feature.hoverColor} text-white font-bold px-8 py-3 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105`}
+                    className={`${feature.color} ${feature.hoverColor} text-white font-bold px-6 py-2 sm:px-8 sm:py-3 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105`}
                   >
                     Keşfet
                   </Button>
@@ -207,14 +207,14 @@ const Index = () => {
         </div>
 
         <div className="text-center">
-          <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl shadow-2xl p-8 text-white">
-            <h3 className="text-2xl font-bold mb-3">Bugünün Hedefi</h3>
-            <p className="text-lg opacity-90">5 doğru cevap = 1 yıldız kazanırsın!</p>
-            <div className="flex justify-center mt-4">
-              <div className="flex space-x-2">
+          <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl shadow-2xl p-6 sm:p-8 text-white">
+            <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Bugünün Hedefi</h3>
+            <p className="text-base sm:text-lg opacity-90">5 doğru cevap = 1 yıldız kazanırsın!</p>
+            <div className="flex justify-center mt-3 sm:mt-4">
+              <div className="flex space-x-1 sm:space-x-2">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <div key={star} className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold">★</span>
+                  <div key={star} className="w-7 h-7 sm:w-8 sm:h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-sm sm:text-base">★</span>
                   </div>
                 ))}
               </div>
