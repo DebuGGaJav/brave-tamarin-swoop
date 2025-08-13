@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Star, Trophy } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
 import ProgressTracker from "@/components/ProgressTracker";
 import { MathCharacter } from "@/components/MathCharacter";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
+import CandyCrushGame from "@/components/CandyCrushGame"; // Import the new game component
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const ToplamaPage = () => {
   const [num1, setNum1] = useState(0);
@@ -20,6 +21,8 @@ const ToplamaPage = () => {
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
+  const [totalPoints, setTotalPoints] = useState(0);
+  const [showMiniGame, setShowMiniGame] = useState(false);
 
   const generateNumbers = () => {
     let max = difficulty === "easy" ? 5 : difficulty === "medium" ? 10 : 20;
@@ -37,6 +40,7 @@ const ToplamaPage = () => {
     
     if (correct) {
       setCorrectAnswers(correctAnswers + 1);
+      setTotalPoints(prev => prev + 10); // Award points for correct answer
       setCharacterMood("happy");
       playSuccessSound();
     } else {
@@ -48,11 +52,20 @@ const ToplamaPage = () => {
   const nextQuestion = () => {
     generateNumbers();
     setCharacterMood("neutral");
+    // Check if mini-game should be unlocked
+    if (totalPoints >= 50 && !showMiniGame) { // Example: unlock at 50 points
+      setShowMiniGame(true);
+    }
   };
 
   useState(() => {
     generateNumbers();
   });
+
+  const handleMiniGameEnd = (gameScore: number) => {
+    setTotalPoints(prev => prev + gameScore); // Add mini-game score to total points
+    setShowMiniGame(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-4">
@@ -115,6 +128,22 @@ const ToplamaPage = () => {
         </Card>
 
         <ProgressTracker topic="Toplama" correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
+        
+        <div className="mt-8 text-center">
+          <h2 className="text-2xl font-bold text-purple-600">Toplam Puan: {totalPoints}</h2>
+          {totalPoints >= 50 && (
+            <Dialog open={showMiniGame} onOpenChange={setShowMiniGame}>
+              <DialogTrigger asChild>
+                <Button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold">
+                  Mini Oyunu Oyna!
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl p-0 border-none">
+                <CandyCrushGame onGameEnd={handleMiniGameEnd} onClose={() => setShowMiniGame(false)} />
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
       </div>
     </div>
   );
