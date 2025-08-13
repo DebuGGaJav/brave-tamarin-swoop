@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy, Sparkles, Users, Award, UserCheck, User } from "lucide-react";
+import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy, Sparkles, Users, Award, UserCheck, User, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { showSuccess } from "@/utils/toast";
 import { MathCharacter } from "@/components/MathCharacter";
@@ -28,6 +28,15 @@ const Index = () => {
       color: "bg-gradient-to-r from-red-400 to-red-500",
       borderColor: "border-red-400",
       hoverColor: "hover:from-red-500 hover:to-red-600"
+    },
+    {
+      title: "Çarpma",
+      icon: <X className="w-8 h-8" />,
+      description: "Eğlenceli çarpma işlemleri",
+      path: "/carpma",
+      color: "bg-gradient-to-r from-orange-400 to-orange-500",
+      borderColor: "border-orange-400",
+      hoverColor: "hover:from-orange-500 hover:to-orange-600"
     },
     {
       title: "Sayılar",
