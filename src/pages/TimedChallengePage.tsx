@@ -93,6 +93,25 @@ const TimedChallengePage = () => {
     }
   }, [gameStarted]);
 
+  // Anlık cevap kontrolü için yeni useEffect
+  useEffect(() => {
+    if (userAnswer === "") {
+      setIsCorrect(false); // Cevap boşsa geri bildirimi sıfırla
+      setCharacterMood("neutral");
+      return;
+    }
+    if (currentQuestion && userAnswer !== "") {
+      const correct = parseInt(userAnswer) === currentQuestion.answer;
+      setIsCorrect(correct);
+      if (correct) {
+        setCharacterMood("happy");
+      } else {
+        setCharacterMood("sad");
+      }
+    }
+  }, [userAnswer, currentQuestion]);
+
+
   const startGame = () => {
     setGameStarted(true);
     setGameEnded(false);
@@ -112,12 +131,11 @@ const TimedChallengePage = () => {
     if (correct) {
       setSessionCorrectAnswers((prev) => prev + 1);
       setSessionPoints((prev) => prev + 10);
-      setCharacterMood("happy");
       playSuccessSound();
     } else {
-      setCharacterMood("sad");
       playErrorSound();
     }
+    // Cevap kontrol edildikten sonra yeni soruya geç
     setTimeout(() => {
       generateQuestion();
     }, 500);
