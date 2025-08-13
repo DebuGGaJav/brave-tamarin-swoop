@@ -63,7 +63,7 @@ const BolmePage = () => {
     setCharacterMood("neutral");
     setSessionCorrectAnswers(0); // Reset for next session
     setSessionTotalQuestions(0); // Reset for next session
-    setSessionPoints(0); // Reset for next session
+    // setSessionPoints(0); // DO NOT RESET sessionPoints here, let them accumulate
 
     if (sessionPoints >= 50 && !showMiniGame) {
       setShowMiniGame(true);

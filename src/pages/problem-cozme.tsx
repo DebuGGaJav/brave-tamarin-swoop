@@ -87,7 +87,7 @@ const ProblemCozmePage = () => {
     setFeedback(null);
     setSessionCorrectAnswers(0); // Reset for next session
     setSessionTotalQuestions(0); // Reset for next session
-    setSessionPoints(0); // Reset for next session
+    // setSessionPoints(0); // DO NOT RESET sessionPoints here, let them accumulate
 
     // Check if mini-game should be unlocked (using a placeholder for global points)
     if (sessionPoints >= 50 && !showMiniGame) {
