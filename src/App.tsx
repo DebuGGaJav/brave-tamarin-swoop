@@ -17,7 +17,8 @@ import AchievementSystem from "@/components/AchievementSystem";
 import ProfilePage from "./pages/Profile";
 import CarpmaPage from "./pages/CarpmaPage";
 import BolmePage from "./pages/BolmePage";
-import MixedOperationsPage from "./pages/MixedOperationsPage"; // MixedOperationsPage'i import et
+import MixedOperationsPage from "./pages/MixedOperationsPage";
+import TimedChallengePage from "./pages/TimedChallengePage"; // TimedChallengePage'i import et
 
 const queryClient = new QueryClient();
 
@@ -33,7 +34,8 @@ const App = () => (
           <Route path="/cikarma" element={<CikarmaPage />} />
           <Route path="/carpma" element={<CarpmaPage />} />
           <Route path="/bolme" element={<BolmePage />} />
-          <Route path="/karisik-islemler" element={<MixedOperationsPage />} /> {/* Yeni karışık işlemler rotasını ekle */}
+          <Route path="/karisik-islemler" element={<MixedOperationsPage />} />
+          <Route path="/zamanli-yarisma" element={<TimedChallengePage />} /> {/* Yeni zamanlı yarışma rotasını ekle */}
           <Route path="/sayilar" element={<SayilarPage />} />
           <Route path="/sekiller" element={<SekillerPage />} />
           <Route path="/esitlik" element={<EsitlikPage />} />

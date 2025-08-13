@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy, Sparkles, Users, Award, UserCheck, User, X, Divide, Shuffle } from "lucide-react"; // Shuffle icon eklendi
+import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy, Sparkles, Users, Award, UserCheck, User, X, Divide, Shuffle, Clock } from "lucide-react"; // Clock icon eklendi
 import { useNavigate } from "react-router-dom";
 import { showSuccess } from "@/utils/toast";
 import { MathCharacter } from "@/components/MathCharacter";
@@ -49,10 +49,10 @@ const Index = () => {
     },
     {
       title: "Karışık İşlemler",
-      icon: <Shuffle className="w-8 h-8" />, // Yeni ikon
+      icon: <Shuffle className="w-8 h-8" />,
       description: "Tüm işlemler bir arada",
       path: "/karisik-islemler",
-      color: "bg-gradient-to-r from-purple-600 to-pink-600", // Yeni renk
+      color: "bg-gradient-to-r from-purple-600 to-pink-600",
       borderColor: "border-purple-600",
       hoverColor: "hover:from-purple-700 hover:to-pink-700"
     },
@@ -95,6 +95,15 @@ const Index = () => {
   ];
 
   const specialFeatures = [
+    {
+      title: "Zamanlı Yarışma",
+      icon: <Clock className="w-8 h-8" />,
+      description: "Süreye karşı yarış!",
+      path: "/zamanli-yarisma",
+      color: "bg-gradient-to-r from-green-400 to-green-500",
+      borderColor: "border-green-400",
+      hoverColor: "hover:from-green-500 hover:to-green-600"
+    },
     {
       title: "Profilim",
       icon: <User className="w-8 h-8" />,
