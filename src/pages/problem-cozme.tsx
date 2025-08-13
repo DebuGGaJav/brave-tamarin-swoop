@@ -8,6 +8,7 @@ import { MathCharacter } from "@/components/MathCharacter";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
+import { NumberInput } from "@/components/ui/number-input";
 
 interface Problem {
   question: string;
@@ -84,28 +85,36 @@ const ProblemCozmePage = () => {
         <ScoreBoard correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
         <DifficultySelector onSelect={setDifficulty} currentLevel={difficulty} />
 
-        <Card className="mb-4">
+        <Card className="mb-4 shadow-xl border-2 border-green-200">
           <CardHeader>
-            <CardTitle className="text-center text-green-600">Problem</CardTitle>
+            <CardTitle className="text-center text-green-600 text-2xl">Problem</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
-              <p className="text-lg text-gray-700 mb-4">
-                {problems[currentProblem].question}
-              </p>
-              <input
-                type="number"
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                className="w-32 h-16 text-2xl text-center border-2 border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="?"
-              />
+              <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <p className="text-xl text-gray-700 font-semibold leading-relaxed">
+                  {problems[currentProblem].question}
+                </p>
+              </div>
+              
+              <div className="mb-6">
+                <NumberInput
+                  value={userAnswer}
+                  onChange={setUserAnswer}
+                  placeholder="?"
+                  size="lg"
+                />
+              </div>
 
               <MathCharacter mood={characterMood} />
 
               {showResult && (
-                <div className={`text-center text-xl font-bold mb-4 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                  {isCorrect ? 'Doğru cevap! 🎉' : 'Yanlış, tekrar deneyin!'}
+                <div className={`text-center text-2xl font-bold mb-6 p-4 rounded-lg ${
+                  isCorrect 
+                    ? 'bg-green-100 text-green-600 border-2 border-green-300' 
+                    : 'bg-red-100 text-red-600 border-2 border-red-300'
+                }`}>
+                  {isCorrect ? '🎉 Doğru cevap! 🎉' : '❌ Yanlış, tekrar deneyin! ❌'}
                 </div>
               )}
 
@@ -113,7 +122,7 @@ const ProblemCozmePage = () => {
                 {!showResult ? (
                   <Button
                     onClick={checkAnswer}
-                    className="bg-green-600 hover:bg-green-700"
+                    className="bg-green-600 hover:bg-green-700 text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     Kontrol Et
                   </Button>
@@ -121,7 +130,7 @@ const ProblemCozmePage = () => {
                   currentProblem < problems.length - 1 && (
                     <Button
                       onClick={nextProblem}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                     >
                       Sonraki Problem
                     </Button>

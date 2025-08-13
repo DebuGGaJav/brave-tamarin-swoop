@@ -8,6 +8,7 @@ import { MathCharacter } from "@/components/MathCharacter";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
+import { NumberInput } from "@/components/ui/number-input";
 
 const CikarmaPage = () => {
   const [num1, setNum1] = useState(0);
@@ -67,31 +68,38 @@ const CikarmaPage = () => {
         <ScoreBoard correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
         <DifficultySelector onSelect={setDifficulty} currentLevel={difficulty} />
 
-        <Card className="mb-4">
+        <Card className="mb-4 shadow-xl border-2 border-red-200">
           <CardHeader>
-            <CardTitle className="text-center text-red-600">Çıkarma Sorusu</CardTitle>
+            <CardTitle className="text-center text-red-600 text-2xl">Çıkarma Sorusu</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
-              <div className="flex justify-center items-center space-x-4 mb-6">
-                <div className="text-4xl font-bold text-red-600">{num1}</div>
-                <Minus className="w-8 h-8 text-red-600" />
-                <div className="text-4xl font-bold text-red-600">{num2}</div>
-                <div className="text-4xl font-bold text-gray-400">=</div>
-                <input
-                  type="number"
+              <div className="flex justify-center items-center space-x-6 mb-8">
+                <div className="bg-white rounded-xl shadow-lg p-6 min-w-[100px]">
+                  <div className="text-5xl font-bold text-red-600">{num1}</div>
+                </div>
+                <Minus className="w-12 h-12 text-red-600" />
+                <div className="bg-white rounded-xl shadow-lg p-6 min-w-[100px]">
+                  <div className="text-5xl font-bold text-red-600">{num2}</div>
+                </div>
+                <div className="text-5xl font-bold text-gray-400">=</div>
+                <NumberInput
                   value={userAnswer}
-                  onChange={(e) => setUserAnswer(e.target.value)}
-                  className="w-32 h-16 text-2xl text-center border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  onChange={setUserAnswer}
                   placeholder="?"
+                  size="lg"
                 />
               </div>
 
               <MathCharacter mood={characterMood} />
 
               {showResult && (
-                <div className={`text-center text-xl font-bold mb-4 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                  {isCorrect ? 'Doğru cevap! 🎉' : 'Yanlış, tekrar deneyin!'}
+                <div className={`text-center text-2xl font-bold mb-6 p-4 rounded-lg ${
+                  isCorrect 
+                    ? 'bg-green-100 text-green-600 border-2 border-green-300' 
+                    : 'bg-red-100 text-red-600 border-2 border-red-300'
+                }`}>
+                  {isCorrect ? '🎉 Doğru cevap! 🎉' : '❌ Yanlış, tekrar deneyin! ❌'}
                 </div>
               )}
 
@@ -99,14 +107,14 @@ const CikarmaPage = () => {
                 {!showResult ? (
                   <Button
                     onClick={checkAnswer}
-                    className="bg-red-600 hover:bg-red-700"
+                    className="bg-red-600 hover:bg-red-700 text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     Kontrol Et
                   </Button>
                 ) : (
                   <Button
                     onClick={nextQuestion}
-                    className="bg-green-600 hover:bg-green-700"
+                    className="bg-green-600 hover:bg-green-700 text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     Sonraki Soru
                   </Button>
