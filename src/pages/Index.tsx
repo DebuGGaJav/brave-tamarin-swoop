@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, Shapes, Hash, Equal } from "lucide-react";
+import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { showSuccess } from "@/utils/toast";
 
@@ -37,6 +37,12 @@ const Index = () => {
       icon: <Equal className="w-8 h-8" />,
       description: "Eşitlik kavramı",
       path: "/esitlik"
+    },
+    {
+      title: "Problem Çözme",
+      icon: <Brain className="w-8 h-8" />,
+      description: "Günlük problemler",
+      path: "/problem-cozme"
     }
   ];
 
@@ -48,18 +54,23 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-4">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-purple-600 mb-2">
-          Matematik Dünyası
-        </h1>
-        <p className="text-xl text-center text-gray-600 mb-8">
-          1. Sınıf Matematik Eğlencesi
-        </p>
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-purple-600 mb-2">
+            Matematik Dünyası
+          </h1>
+          <p className="text-xl text-gray-600 mb-4">
+            1. Sınıf Matematik Eğlencesi
+          </p>
+          <div className="flex justify-center">
+            <Trophy className="w-8 h-8 text-yellow-500" />
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {topics.map((topic, index) => (
             <Card 
               key={index} 
-              className="hover:shadow-lg transition-all duration-300 bg-white border-2 border-purple-200"
+              className="hover:shadow-lg transition-all duration-300 bg-white border-2 border-purple-200 hover:border-purple-400 hover:scale-105"
             >
               <CardHeader>
                 <div className="flex justify-center mb-4">

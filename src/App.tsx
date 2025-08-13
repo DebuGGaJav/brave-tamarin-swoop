@@ -9,6 +9,8 @@ import ToplamaPage from "./pages/toplama";
 import CikarmaPage from "./pages/cikarma";
 import SayilarPage from "./pages/sayilar";
 import SekillerPage from "./pages/sekiller";
+import EsitlikPage from "./pages/esitlik";
+import ProblemCozmePage from "./pages/problem-cozme";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,8 @@ const App = () => (
           <Route path="/cikarma" element={<CikarmaPage />} />
           <Route path="/sayilar" element={<SayilarPage />} />
           <Route path="/sekiller" element={<SekillerPage />} />
+          <Route path="/esitlik" element={<EsitlikPage />} />
+          <Route path="/problem-cozme" element={<ProblemCozmePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
