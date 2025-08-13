@@ -19,7 +19,6 @@ const SayilarPage = () => {
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
-  const [gameMode, setGameMode] = useState<"count" | "identify">("count");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
   const [totalPoints, setTotalPoints] = useState(0);
   const [showMiniGame, setShowMiniGame] = useState(false);
@@ -64,10 +63,10 @@ const SayilarPage = () => {
 
   const renderNumberDisplay = () => {
     return (
-      <div className="flex justify-center flex-wrap gap-2 mb-6 max-w-md mx-auto">
-        <img src="/images/counting_fingers.png" alt="Counting Fingers" className="mx-auto mb-4 w-32 h-32 object-contain" />
+      <div className="flex justify-center flex-wrap gap-2 sm:gap-3 mb-6 max-w-md mx-auto">
+        <img src="/images/counting_fingers.png" alt="Counting Fingers" className="mx-auto mb-4 w-24 h-24 sm:w-32 sm:h-32 object-contain" />
         {Array.from({ length: currentNumber }, (_, i) => (
-          <div key={i} className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">
+          <div key={i} className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-md">
             {i + 1}
           </div>
         ))}
@@ -81,31 +80,31 @@ const SayilarPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-cyan-50 p-4">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-cyan-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-blue-600 mb-2">Sayılar</h1>
-          <p className="text-xl text-gray-600">Sayıları öğrenelim!</p>
+        <div className="text-center mb-8 sm:mb-10">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-600 mb-2">Sayılar</h1>
+          <p className="text-lg sm:text-xl text-gray-600">Sayıları öğrenelim!</p>
         </div>
 
         <ScoreBoard correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
         <DifficultySelector onSelect={setDifficulty} currentLevel={difficulty} />
 
-        <Card className="mb-4">
+        <Card className="mb-4 shadow-xl border-2 border-blue-200">
           <CardHeader>
-            <CardTitle className="text-center text-blue-600">Sayı Sayma</CardTitle>
+            <CardTitle className="text-center text-blue-600 text-xl sm:text-2xl">Sayı Sayma</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
               {renderNumberDisplay()}
               
               <div className="mb-4">
-                <p className="text-lg text-gray-700 mb-2">Bu sayı kaç?</p>
+                <p className="text-lg sm:text-xl text-gray-700 mb-2">Bu sayı kaç?</p>
                 <input
                   type="number"
                   value={userAnswer}
                   onChange={(e) => setUserAnswer(e.target.value)}
-                  className="w-32 h-16 text-2xl text-center border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md"
+                  className="w-24 h-12 sm:w-32 sm:h-16 text-xl sm:text-2xl text-center border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md"
                   placeholder="?"
                   disabled={showResult}
                 />
@@ -114,7 +113,7 @@ const SayilarPage = () => {
               <MathCharacter mood={characterMood} />
 
               {showResult && (
-                <div className={`text-center text-xl font-bold mb-4 p-4 rounded-lg ${
+                <div className={`text-center text-lg sm:text-xl font-bold mb-4 p-3 sm:p-4 rounded-lg ${
                   isCorrect 
                     ? 'bg-green-100 text-green-600 border-2 border-green-300' 
                     : 'bg-red-100 text-red-600 border-2 border-red-300'
@@ -127,7 +126,7 @@ const SayilarPage = () => {
                 {!showResult ? (
                   <Button
                     onClick={checkAnswer}
-                    className="bg-blue-600 hover:bg-blue-700 px-8 py-3 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="bg-blue-600 hover:bg-blue-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
                     disabled={!userAnswer}
                   >
                     Kontrol Et
@@ -135,7 +134,7 @@ const SayilarPage = () => {
                 ) : (
                   <Button
                     onClick={nextQuestion}
-                    className="bg-green-600 hover:bg-green-700 px-8 py-3 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="bg-green-600 hover:bg-green-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     Sonraki Soru
                   </Button>
@@ -148,15 +147,15 @@ const SayilarPage = () => {
         <ProgressTracker topic="Sayılar" correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
 
         <div className="mt-8 text-center">
-          <h2 className="text-2xl font-bold text-blue-600">Toplam Puan: {totalPoints}</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-blue-600">Toplam Puan: {totalPoints}</h2>
           {totalPoints >= 50 && (
             <Dialog open={showMiniGame} onOpenChange={setShowMiniGame}>
               <DialogTrigger asChild>
-                <Button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold">
+                <Button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg">
                   Mini Oyunu Oyna!
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl p-0 border-none">
+              <DialogContent className="max-w-sm sm:max-w-2xl p-0 border-none">
                 <CandyCrushGame onGameEnd={handleMiniGameEnd} onClose={() => setShowMiniGame(false)} />
               </DialogContent>
             </Dialog>
