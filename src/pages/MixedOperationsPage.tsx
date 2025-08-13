@@ -24,8 +24,7 @@ interface Question {
 const MixedOperationsPage = () => {
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState("");
-  const [showResult, setShowResult] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
+  const [feedback, setFeedback] = useState<boolean | null>(null); // null: no feedback, true: correct, false: incorrect
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
@@ -80,7 +79,7 @@ const MixedOperationsPage = () => {
 
     setCurrentQuestion({ num1, num2, operation: randomOperation, answer, image: "/images/math_character_excited.png" }); // Generic image
     setUserAnswer("");
-    setShowResult(false);
+    setFeedback(null); // Reset feedback
   };
 
   useEffect(() => {
@@ -90,8 +89,7 @@ const MixedOperationsPage = () => {
   const checkAnswer = () => {
     if (!currentQuestion) return;
     const correct = parseInt(userAnswer) === currentQuestion.answer;
-    setIsCorrect(correct);
-    setShowResult(true);
+    setFeedback(correct); // Set feedback
     setTotalQuestions(totalQuestions + 1);
     
     if (correct) {
@@ -188,19 +186,19 @@ const MixedOperationsPage = () => {
 
               <MathCharacter mood={characterMood} />
 
-              {showResult && (
+              {feedback !== null && (
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`text-center text-lg sm:text-xl font-bold mb-4 p-3 sm:p-4 rounded-lg ${isCorrect ? 'bg-green-100 text-green-600 border-2 border-green-300' : 'bg-red-100 text-red-600 border-2 border-red-300'}`}
+                  className={`text-center text-lg sm:text-xl font-bold mb-4 p-3 sm:p-4 rounded-lg ${feedback ? 'bg-green-100 text-green-600 border-2 border-green-300' : 'bg-red-100 text-red-600 border-2 border-red-300'}`}
                 >
-                  {isCorrect ? '🎉 Doğru cevap! 🎉' : '❌ Yanlış, tekrar deneyin! ❌'}
+                  {feedback ? '🎉 Doğru cevap! 🎉' : '❌ Yanlış, tekrar deneyin! ❌'}
                 </motion.div>
               )}
 
               <div className="flex justify-center space-x-4">
-                {!showResult ? (
+                {feedback === null ? (
                   <Button
                     onClick={checkAnswer}
                     className={`bg-purple-600 hover:bg-purple-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200`}

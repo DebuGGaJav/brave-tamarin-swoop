@@ -20,8 +20,7 @@ interface Problem {
 const ProblemCozmePage = () => {
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0); // Renamed to avoid conflict
   const [userAnswer, setUserAnswer] = useState("");
-  const [showResult, setShowResult] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
+  const [feedback, setFeedback] = useState<boolean | null>(null); // null: no feedback, true: correct, false: incorrect
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
@@ -60,8 +59,7 @@ const ProblemCozmePage = () => {
 
   const checkAnswer = () => {
     const correct = parseInt(userAnswer) === problems[currentProblemIndex].answer;
-    setIsCorrect(correct);
-    setShowResult(true);
+    setFeedback(correct); // Set feedback
     setTotalQuestions(totalQuestions + 1);
     
     if (correct) {
@@ -79,13 +77,13 @@ const ProblemCozmePage = () => {
     if (currentProblemIndex < problems.length - 1) {
       setCurrentProblemIndex(currentProblemIndex + 1);
       setUserAnswer("");
-      setShowResult(false);
+      setFeedback(null); // Reset feedback
       setCharacterMood("neutral");
     } else {
       // All problems completed, reset or show completion message
       setCurrentProblemIndex(0); // Loop back to start for now
       setUserAnswer("");
-      setShowResult(false);
+      setFeedback(null); // Reset feedback
       setCharacterMood("excited"); // Maybe excited for completing all problems
       // You might want to add a modal or a different screen for completion
     }
@@ -142,22 +140,22 @@ const ProblemCozmePage = () => {
 
               <MathCharacter mood={characterMood} />
 
-              {showResult && (
+              {feedback !== null && (
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                   className={`text-center text-lg sm:text-xl font-bold mb-4 p-3 sm:p-4 rounded-lg ${
-                    isCorrect 
+                    feedback 
                       ? 'bg-green-100 text-green-600 border-2 border-green-300' 
                       : 'bg-red-100 text-red-600 border-2 border-red-300'
                   }`}>
-                  {isCorrect ? '🎉 Doğru cevap! 🎉' : '❌ Yanlış, tekrar deneyin! ❌'}
+                  {feedback ? '🎉 Doğru cevap! 🎉' : '❌ Yanlış, tekrar deneyin! ❌'}
                 </motion.div>
               )}
 
               <div className="flex justify-center space-x-4">
-                {!showResult ? (
+                {feedback === null ? (
                   <Button
                     onClick={checkAnswer}
                     className="bg-green-600 hover:bg-green-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
