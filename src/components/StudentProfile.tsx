@@ -120,8 +120,8 @@ export const StudentProfile = () => {
         {/* Profile Header */}
         <Card className="mb-6 shadow-xl border-2 border-purple-200">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
+              <div className="flex items-center space-x-4 mb-4 sm:mb-0">
                 <div className="w-20 h-20 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                   {stats.name.charAt(0)}
                 </div>
@@ -130,8 +130,8 @@ export const StudentProfile = () => {
                   <p className="text-gray-600">Seviye {stats.level} Öğrenci</p>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="flex items-center space-x-2 mb-2">
+              <div className="text-center sm:text-right">
+                <div className="flex items-center justify-center sm:justify-end space-x-2 mb-2">
                   <TrendingUp className="w-5 h-5 text-orange-500" />
                   <span className="text-lg font-bold text-orange-500">{stats.streak} gün seri</span>
                 </div>
