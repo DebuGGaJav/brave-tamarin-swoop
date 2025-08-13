@@ -7,39 +7,41 @@ import { MathCharacter } from "@/components/MathCharacter";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
-import CandyCrushGame from "@/components/CandyCrushGame"; // Import the new game component
+import CandyCrushGame from "@/components/CandyCrushGame";
+import NumberOrderingGame from "@/components/NumberOrderingGame"; // Yeni mini oyunu import et
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { motion } from "framer-motion"; // framer-motion import edildi
+import { motion } from "framer-motion";
 
 const ToplamaPage = () => {
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
-  const [feedback, setFeedback] = useState<boolean | null>(null); // null: no feedback, true: correct, false: incorrect
+  const [feedback, setFeedback] = useState<boolean | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
   const [totalPoints, setTotalPoints] = useState(0);
-  const [showMiniGame, setShowMiniGame] = useState(false);
+  const [showCandyCrush, setShowCandyCrush] = useState(false); // Candy Crush için
+  const [showNumberOrdering, setShowNumberOrdering] = useState(false); // Yeni oyun için
 
   const generateNumbers = () => {
     let max = difficulty === "easy" ? 5 : difficulty === "medium" ? 10 : 20;
     setNum1(Math.floor(Math.random() * max) + 1);
     setNum2(Math.floor(Math.random() * max) + 1);
     setUserAnswer("");
-    setFeedback(null); // Reset feedback
+    setFeedback(null);
   };
 
   const checkAnswer = () => {
     const correct = parseInt(userAnswer) === num1 + num2;
-    setFeedback(correct); // Set feedback
+    setFeedback(correct);
     setTotalQuestions(totalQuestions + 1);
     
     if (correct) {
       setCorrectAnswers(correctAnswers + 1);
-      setTotalPoints(prev => prev + 10); // Award points for correct answer
+      setTotalPoints(prev => prev + 10);
       setCharacterMood("happy");
       playSuccessSound();
     } else {
@@ -51,9 +53,11 @@ const ToplamaPage = () => {
   const nextQuestion = () => {
     generateNumbers();
     setCharacterMood("neutral");
-    // Check if mini-game should be unlocked
-    if (totalPoints >= 50 && !showMiniGame) { // Example: unlock at 50 points
-      setShowMiniGame(true);
+    // Mini oyunları tetikleme mantığı
+    if (totalPoints >= 50 && totalPoints < 100 && !showCandyCrush) {
+      setShowCandyCrush(true);
+    } else if (totalPoints >= 100 && !showNumberOrdering) {
+      setShowNumberOrdering(true);
     }
   };
 
@@ -61,9 +65,14 @@ const ToplamaPage = () => {
     generateNumbers();
   });
 
-  const handleMiniGameEnd = (gameScore: number) => {
-    setTotalPoints(prev => prev + gameScore); // Add mini-game score to total points
-    setShowMiniGame(false);
+  const handleCandyCrushEnd = (gameScore: number) => {
+    setTotalPoints(prev => prev + gameScore);
+    setShowCandyCrush(false);
+  };
+
+  const handleNumberOrderingEnd = (gameScore: number) => {
+    setTotalPoints(prev => prev + gameScore);
+    setShowNumberOrdering(false);
   };
 
   return (
@@ -136,18 +145,34 @@ const ToplamaPage = () => {
         
         <div className="mt-8 text-center">
           <h2 className="text-xl sm:text-2xl font-bold text-purple-600">Toplam Puan: {totalPoints}</h2>
-          {totalPoints >= 50 && (
-            <Dialog open={showMiniGame} onOpenChange={setShowMiniGame}>
-              <DialogTrigger asChild>
-                <Button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg">
-                  Mini Oyunu Oyna!
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-sm sm:max-w-2xl p-0 border-none">
-                <CandyCrushGame onGameEnd={handleMiniGameEnd} onClose={() => setShowMiniGame(false)} />
-              </DialogContent>
-            </Dialog>
+          {totalPoints >= 50 && !showCandyCrush && !showNumberOrdering && (
+            <Button 
+              onClick={() => setShowCandyCrush(true)} 
+              className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg"
+            >
+              Mini Oyunu Oyna! (Şeker Patlatma)
+            </Button>
           )}
+          {totalPoints >= 100 && !showNumberOrdering && (
+            <Button 
+              onClick={() => setShowNumberOrdering(true)} 
+              className="mt-4 ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg"
+            >
+              Mini Oyunu Oyna! (Sayı Sıralama)
+            </Button>
+          )}
+
+          <Dialog open={showCandyCrush} onOpenChange={setShowCandyCrush}>
+            <DialogContent className="max-w-sm sm:max-w-2xl p-0 border-none">
+              <CandyCrushGame onGameEnd={handleCandyCrushEnd} onClose={() => setShowCandyCrush(false)} />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={showNumberOrdering} onOpenChange={setShowNumberOrdering}>
+            <DialogContent className="max-w-sm sm:max-w-2xl p-0 border-none">
+              <NumberOrderingGame onGameEnd={handleNumberOrderingEnd} onClose={() => setShowNumberOrdering(false)} />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
