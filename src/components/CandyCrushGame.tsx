@@ -144,8 +144,8 @@ const CandyCrushGame: React.FC<CandyCrushGameProps> = ({ onGameEnd, onClose }) =
   return (
     <Card className="w-full max-w-lg mx-auto bg-gradient-to-br from-pink-100 to-purple-100 shadow-2xl border-4 border-pink-300">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-2xl font-bold text-purple-700 flex items-center">
-          <Gem className="w-6 h-6 mr-2 text-pink-500" />
+        <CardTitle className="text-xl sm:text-2xl font-bold text-purple-700 flex items-center">
+          <Gem className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-pink-500" />
           Şeker Patlatma Oyunu
         </CardTitle>
         <Button variant="ghost" size="icon" onClick={onClose} className="text-gray-500 hover:text-gray-700">
@@ -154,11 +154,11 @@ const CandyCrushGame: React.FC<CandyCrushGameProps> = ({ onGameEnd, onClose }) =
       </CardHeader>
       <CardContent>
         <div className="flex justify-between items-center mb-4 p-2 bg-white rounded-lg shadow-md">
-          <div className="text-lg font-semibold text-gray-700">Puan: <span className="text-green-600">{score}</span></div>
-          <div className="text-lg font-semibold text-gray-700">Hamle: <span className="text-blue-600">{movesLeft}</span></div>
+          <div className="text-base sm:text-lg font-semibold text-gray-700">Puan: <span className="text-green-600">{score}</span></div>
+          <div className="text-base sm:text-lg font-semibold text-gray-700">Hamle: <span className="text-blue-600">{movesLeft}</span></div>
         </div>
 
-        <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${BOARD_SIZE}, 1fr)` }}>
+        <div className="grid gap-0.5 sm:gap-1" style={{ gridTemplateColumns: `repeat(${BOARD_SIZE}, 1fr)` }}>
           {board.flat().map((candy, index) => {
             const r = Math.floor(index / BOARD_SIZE);
             const c = index % BOARD_SIZE;
@@ -166,7 +166,7 @@ const CandyCrushGame: React.FC<CandyCrushGameProps> = ({ onGameEnd, onClose }) =
             return (
               <motion.div
                 key={index}
-                className={`w-10 h-10 flex items-center justify-center text-3xl rounded-md cursor-pointer transition-all duration-100 ${
+                className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-2xl sm:text-3xl rounded-md cursor-pointer transition-all duration-100 ${
                   isSelected ? 'ring-4 ring-blue-500 scale-110' : ''
                 }`}
                 onClick={() => handleCandyClick(r, c)}
