@@ -23,7 +23,8 @@ const SayilarPage = () => {
 
   const generateNumber = () => {
     let max = difficulty === "easy" ? 5 : difficulty === "medium" ? 10 : 20;
-    setCurrentNumber(Math.floor(Math.random() * max) + 1);
+    const newNumber = Math.floor(Math.random() * max) + 1;
+    setCurrentNumber(newNumber);
     setUserAnswer("");
     setShowResult(false);
   };
@@ -55,9 +56,9 @@ const SayilarPage = () => {
 
   const renderNumberDisplay = () => {
     return (
-      <div className="flex justify-center space-x-2 mb-6">
+      <div className="flex justify-center flex-wrap gap-2 mb-6 max-w-md mx-auto">
         {Array.from({ length: currentNumber }, (_, i) => (
-          <div key={i} className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+          <div key={i} className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">
             {i + 1}
           </div>
         ))}
@@ -90,16 +91,21 @@ const SayilarPage = () => {
                   type="number"
                   value={userAnswer}
                   onChange={(e) => setUserAnswer(e.target.value)}
-                  className="w-32 h-16 text-2xl text-center border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-32 h-16 text-2xl text-center border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md"
                   placeholder="?"
+                  disabled={showResult}
                 />
               </div>
 
               <MathCharacter mood={characterMood} />
 
               {showResult && (
-                <div className={`text-center text-xl font-bold mb-4 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                  {isCorrect ? 'Doğru cevap! 🎉' : 'Yanlış, tekrar deneyin!'}
+                <div className={`text-center text-xl font-bold mb-4 p-4 rounded-lg ${
+                  isCorrect 
+                    ? 'bg-green-100 text-green-600 border-2 border-green-300' 
+                    : 'bg-red-100 text-red-600 border-2 border-red-300'
+                }`}>
+                  {isCorrect ? '🎉 Doğru cevap! 🎉' : '❌ Yanlış, tekrar deneyin! ❌'}
                 </div>
               )}
 
@@ -107,14 +113,15 @@ const SayilarPage = () => {
                 {!showResult ? (
                   <Button
                     onClick={checkAnswer}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-blue-600 hover:bg-blue-700 px-8 py-3 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
+                    disabled={!userAnswer}
                   >
                     Kontrol Et
                   </Button>
                 ) : (
                   <Button
                     onClick={nextQuestion}
-                    className="bg-green-600 hover:bg-green-700"
+                    className="bg-green-600 hover:bg-green-700 px-8 py-3 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     Sonraki Soru
                   </Button>

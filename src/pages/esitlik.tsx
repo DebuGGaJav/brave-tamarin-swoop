@@ -9,9 +9,14 @@ import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
 
+interface EqualityQuestion {
+  leftSide: number;
+  rightSide: number;
+  correctAnswer: "eşit" | "eşit değil";
+}
+
 const EsitlikPage = () => {
-  const [leftSide, setLeftSide] = useState(0);
-  const [rightSide, setRightSide] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState<EqualityQuestion | null>(null);
   const [userAnswer, setUserAnswer] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -21,25 +26,32 @@ const EsitlikPage = () => {
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
 
-  const generateEquation = () => {
+  const generateQuestion = () => {
     let max = difficulty === "easy" ? 5 : difficulty === "medium" ? 10 : 20;
     const left = Math.floor(Math.random() * max) + 1;
     const right = Math.floor(Math.random() * max) + 1;
-    setLeftSide(left);
-    setRightSide(right);
+    
+    const correctAnswer = left === right ? "eşit" : "eşit değil";
+    
+    setCurrentQuestion({
+      leftSide: left,
+      rightSide: right,
+      correctAnswer: correctAnswer
+    });
+    
     setUserAnswer("");
     setShowResult(false);
   };
 
   const checkAnswer = () => {
-    const userValue = userAnswer.toLowerCase();
-    const correct = leftSide === rightSide ? "eşit" : "eşit değil";
-    const isAnswerCorrect = userValue === correct;
-    setIsCorrect(isAnswerCorrect);
+    if (!currentQuestion) return;
+    
+    const correct = userAnswer === currentQuestion.correctAnswer;
+    setIsCorrect(correct);
     setShowResult(true);
     setTotalQuestions(totalQuestions + 1);
     
-    if (isAnswerCorrect) {
+    if (correct) {
       setCorrectAnswers(correctAnswers + 1);
       setCharacterMood("happy");
       playSuccessSound();
@@ -50,13 +62,17 @@ const EsitlikPage = () => {
   };
 
   const nextQuestion = () => {
-    generateEquation();
+    generateQuestion();
     setCharacterMood("neutral");
   };
 
   useState(() => {
-    generateEquation();
+    generateQuestion();
   });
+
+  if (!currentQuestion) {
+    return <div>Yükleniyor...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50 p-4">
@@ -76,9 +92,13 @@ const EsitlikPage = () => {
           <CardContent>
             <div className="text-center mb-6">
               <div className="flex justify-center items-center space-x-4 mb-6">
-                <div className="text-4xl font-bold text-yellow-600">{leftSide}</div>
+                <div className="bg-white rounded-xl shadow-lg p-6 min-w-[80px]">
+                  <div className="text-4xl font-bold text-yellow-600">{currentQuestion.leftSide}</div>
+                </div>
                 <Equal className="w-8 h-8 text-yellow-600" />
-                <div className="text-4xl font-bold text-yellow-600">{rightSide}</div>
+                <div className="bg-white rounded-xl shadow-lg p-6 min-w-[80px]">
+                  <div className="text-4xl font-bold text-yellow-600">{currentQuestion.rightSide}</div>
+                </div>
               </div>
               
               <div className="mb-4">
@@ -86,21 +106,23 @@ const EsitlikPage = () => {
                 <div className="flex justify-center space-x-4">
                   <Button
                     onClick={() => setUserAnswer("eşit")}
-                    className={`p-4 h-auto ${
+                    className={`p-4 h-auto text-lg font-bold transition-all duration-200 ${
                       userAnswer === "eşit"
-                        ? "bg-green-600 text-white"
-                        : "bg-gray-100 hover:bg-gray-200"
+                        ? "bg-green-600 text-white shadow-lg transform scale-105"
+                        : "bg-gray-100 hover:bg-gray-200 hover:shadow-md"
                     }`}
+                    disabled={showResult}
                   >
                     Eşit
                   </Button>
                   <Button
                     onClick={() => setUserAnswer("eşit değil")}
-                    className={`p-4 h-auto ${
+                    className={`p-4 h-auto text-lg font-bold transition-all duration-200 ${
                       userAnswer === "eşit değil"
-                        ? "bg-red-600 text-white"
-                        : "bg-gray-100 hover:bg-gray-200"
+                        ? "bg-red-600 text-white shadow-lg transform scale-105"
+                        : "bg-gray-100 hover:bg-gray-200 hover:shadow-md"
                     }`}
+                    disabled={showResult}
                   >
                     Eşit Değil
                   </Button>
@@ -110,8 +132,12 @@ const EsitlikPage = () => {
               <MathCharacter mood={characterMood} />
 
               {showResult && (
-                <div className={`text-center text-xl font-bold mb-4 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                  {isCorrect ? 'Doğru cevap! 🎉' : 'Yanlış, tekrar deneyin!'}
+                <div className={`text-center text-xl font-bold mb-4 p-4 rounded-lg ${
+                  isCorrect 
+                    ? 'bg-green-100 text-green-600 border-2 border-green-300' 
+                    : 'bg-red-100 text-red-600 border-2 border-red-300'
+                }`}>
+                  {isCorrect ? '🎉 Doğru cevap! 🎉' : '❌ Yanlış, tekrar deneyin! ❌'}
                 </div>
               )}
 
@@ -119,7 +145,7 @@ const EsitlikPage = () => {
                 {!showResult ? (
                   <Button
                     onClick={checkAnswer}
-                    className="bg-yellow-600 hover:bg-yellow-700"
+                    className="bg-yellow-600 hover:bg-yellow-700 px-8 py-3 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
                     disabled={!userAnswer}
                   >
                     Kontrol Et
@@ -127,7 +153,7 @@ const EsitlikPage = () => {
                 ) : (
                   <Button
                     onClick={nextQuestion}
-                    className="bg-green-600 hover:bg-green-700"
+                    className="bg-green-600 hover:bg-green-700 px-8 py-3 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     Sonraki Soru
                   </Button>

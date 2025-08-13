@@ -9,9 +9,15 @@ import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
 
+interface ShapeQuestion {
+  shape: string;
+  emoji: string;
+  options: string[];
+  correctAnswer: string;
+}
+
 const SekillerPage = () => {
-  const [currentShape, setCurrentShape] = useState("");
-  const [options, setOptions] = useState<string[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<ShapeQuestion | null>(null);
   const [userAnswer, setUserAnswer] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -21,29 +27,81 @@ const SekillerPage = () => {
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
 
-  const shapes = ["kare", "daire", "üçgen", "dikdörtgen", "yamuk"];
-  const shapeEmojis = {
-    kare: "⬜",
-    daire: "⭕",
-    üçgen: "🔺",
-    dikdörtgen: "▭",
-    yamuk: "🔷"
-  };
+  const shapeQuestions: ShapeQuestion[] = [
+    {
+      shape: "kare",
+      emoji: "⬜",
+      options: ["kare", "daire", "üçgen", "dikdörtgen"],
+      correctAnswer: "kare"
+    },
+    {
+      shape: "daire",
+      emoji: "⭕",
+      options: ["daire", "kare", "üçgen", "yamuk"],
+      correctAnswer: "daire"
+    },
+    {
+      shape: "üçgen",
+      emoji: "🔺",
+      options: ["üçgen", "kare", "daire", "dikdörtgen"],
+      correctAnswer: "üçgen"
+    },
+    {
+      shape: "dikdörtgen",
+      emoji: "▭",
+      options: ["dikdörtgen", "kare", "üçgen", "daire"],
+      correctAnswer: "dikdörtgen"
+    },
+    {
+      shape: "yamuk",
+      emoji: "🔷",
+      options: ["yamuk", "kare", "üçgen", "daire"],
+      correctAnswer: "yamuk"
+    },
+    {
+      shape: "kalp",
+      emoji: "❤️",
+      options: ["kalp", "yıldız", "daire", "kare"],
+      correctAnswer: "kalp"
+    },
+    {
+      shape: "yıldız",
+      emoji: "⭐",
+      options: ["yıldız", "kalp", "üçgen", "kare"],
+      correctAnswer: "yıldız"
+    },
+    {
+      shape: "altıgen",
+      emoji: "⬡",
+      options: ["altıgen", "kare", "daire", "üçgen"],
+      correctAnswer: "altıgen"
+    }
+  ];
 
-  const generateShape = () => {
-    const shape = shapes[Math.floor(Math.random() * shapes.length)];
-    setCurrentShape(shape);
+  const generateQuestion = () => {
+    // Filter out the current question to avoid repetition
+    const availableQuestions = currentQuestion 
+      ? shapeQuestions.filter(q => q.shape !== currentQuestion.shape)
+      : shapeQuestions;
     
-    const wrongOptions = shapes.filter(s => s !== shape).sort(() => 0.5 - Math.random()).slice(0, 3);
-    const allOptions = [shape, ...wrongOptions].sort(() => 0.5 - Math.random());
-    setOptions(allOptions);
+    const randomQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+    
+    // Shuffle options to ensure they're not always in the same order
+    const shuffledOptions = [...randomQuestion.options].sort(() => Math.random() - 0.5);
+    
+    setCurrentQuestion({
+      ...randomQuestion,
+      options: shuffledOptions
+    });
     
     setUserAnswer("");
     setShowResult(false);
   };
 
   const checkAnswer = () => {
-    const correct = userAnswer === currentShape;
+    if (!currentQuestion) return;
+    
+    const correct = userAnswer === currentQuestion.correctAnswer;
     setIsCorrect(correct);
     setShowResult(true);
     setTotalQuestions(totalQuestions + 1);
@@ -59,13 +117,17 @@ const SekillerPage = () => {
   };
 
   const nextQuestion = () => {
-    generateShape();
+    generateQuestion();
     setCharacterMood("neutral");
   };
 
   useState(() => {
-    generateShape();
+    generateQuestion();
   });
+
+  if (!currentQuestion) {
+    return <div>Yükleniyor...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 p-4">
@@ -85,21 +147,22 @@ const SekillerPage = () => {
           <CardContent>
             <div className="text-center mb-6">
               <div className="text-8xl mb-6">
-                {shapeEmojis[currentShape as keyof typeof shapeEmojis]}
+                {currentQuestion.emoji}
               </div>
               
               <div className="mb-4">
                 <p className="text-lg text-gray-700 mb-4">Bu şekil hangisidir?</p>
-                <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto">
-                  {options.map((option) => (
+                <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto">
+                  {currentQuestion.options.map((option) => (
                     <Button
                       key={option}
                       onClick={() => setUserAnswer(option)}
-                      className={`p-4 h-auto ${
+                      className={`p-4 h-auto text-lg font-medium transition-all duration-200 ${
                         userAnswer === option
-                          ? "bg-purple-600 text-white"
-                          : "bg-gray-100 hover:bg-gray-200"
+                          ? "bg-purple-600 text-white shadow-lg transform scale-105"
+                          : "bg-gray-100 hover:bg-gray-200 hover:shadow-md"
                       }`}
+                      disabled={showResult}
                     >
                       {option}
                     </Button>
@@ -110,8 +173,12 @@ const SekillerPage = () => {
               <MathCharacter mood={characterMood} />
 
               {showResult && (
-                <div className={`text-center text-xl font-bold mb-4 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                  {isCorrect ? 'Doğru cevap! 🎉' : 'Yanlış, tekrar deneyin!'}
+                <div className={`text-center text-xl font-bold mb-4 p-4 rounded-lg ${
+                  isCorrect 
+                    ? 'bg-green-100 text-green-600 border-2 border-green-300' 
+                    : 'bg-red-100 text-red-600 border-2 border-red-300'
+                }`}>
+                  {isCorrect ? '🎉 Doğru cevap! 🎉' : '❌ Yanlış, tekrar deneyin! ❌'}
                 </div>
               )}
 
@@ -119,7 +186,7 @@ const SekillerPage = () => {
                 {!showResult ? (
                   <Button
                     onClick={checkAnswer}
-                    className="bg-purple-600 hover:bg-purple-700"
+                    className="bg-purple-600 hover:bg-purple-700 px-8 py-3 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
                     disabled={!userAnswer}
                   >
                     Kontrol Et
@@ -127,7 +194,7 @@ const SekillerPage = () => {
                 ) : (
                   <Button
                     onClick={nextQuestion}
-                    className="bg-green-600 hover:bg-green-700"
+                    className="bg-green-600 hover:bg-green-700 px-8 py-3 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     Sonraki Soru
                   </Button>
