@@ -14,7 +14,7 @@ import { showSuccess } from "@/utils/toast";
 
 interface ShapeQuestion {
   shape: string;
-  emoji: string;
+  image: string; // Görsel yolu
   options: string[];
   correctAnswer: string;
 }
@@ -35,49 +35,49 @@ const SekillerPage = () => {
   const shapeQuestions: ShapeQuestion[] = [
     {
       shape: "kare",
-      emoji: "⬜",
+      image: "/images/square.png",
       options: ["kare", "daire", "üçgen", "dikdörtgen"],
       correctAnswer: "kare"
     },
     {
       shape: "daire",
-      emoji: "⭕",
+      image: "/images/circle.png",
       options: ["daire", "kare", "üçgen", "elmas"],
       correctAnswer: "daire"
     },
     {
       shape: "üçgen",
-      emoji: "🔺",
+      image: "/images/triangle.png",
       options: ["üçgen", "kare", "daire", "dikdörtgen"],
       correctAnswer: "üçgen"
     },
     {
-      shape: "dikdörtgen",
-      emoji: "▭",
-      options: ["dikdörtgen", "kare", "üçgen", "daire"],
-      correctAnswer: "dikdörtgen"
-    },
-    {
-      shape: "elmas", // Yamuk yerine elmas
-      emoji: "🔷",
+      shape: "elmas",
+      image: "/images/diamond.png",
       options: ["elmas", "kare", "üçgen", "daire"],
       correctAnswer: "elmas"
     },
     {
+      shape: "dikdörtgen",
+      image: "/images/rectangle.png",
+      options: ["dikdörtgen", "kare", "üçgen", "daire"],
+      correctAnswer: "dikdörtgen"
+    },
+    {
       shape: "kalp",
-      emoji: "❤️",
+      image: "/images/heart.png",
       options: ["kalp", "yıldız", "daire", "kare"],
       correctAnswer: "kalp"
     },
     {
       shape: "yıldız",
-      emoji: "⭐",
+      image: "/images/star.png",
       options: ["yıldız", "kalp", "üçgen", "kare"],
       correctAnswer: "yıldız"
     },
     {
       shape: "altıgen",
-      emoji: "⬡",
+      image: "/images/hexagon.png",
       options: ["altıgen", "kare", "daire", "üçgen"],
       correctAnswer: "altıgen"
     }
@@ -184,7 +184,12 @@ const SekillerPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
-              <div className="text-7xl sm:text-8xl mb-6">{currentQuestion.emoji}</div>
+              {/* Görseli burada gösteriyoruz */}
+              <img 
+                src={currentQuestion.image} 
+                alt={currentQuestion.shape} 
+                className="mx-auto mb-4 w-24 h-24 sm:w-32 sm:h-32 object-contain" 
+              />
               
               <div className="mb-4">
                 <p className="text-lg sm:text-xl text-gray-700 mb-4">Bu şekil hangisidir?</p>
