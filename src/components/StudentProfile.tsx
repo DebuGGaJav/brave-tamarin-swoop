@@ -23,63 +23,144 @@ interface StudentStats {
   }[];
 }
 
+const LOCAL_STORAGE_KEY = "studentStats";
+
 export const StudentProfile = () => {
-  const [stats, setStats] = useState<StudentStats>({
-    name: "Ali",
-    level: 5,
-    experience: 750,
-    totalQuestions: 156,
-    correctAnswers: 132,
-    streak: 7,
-    joinDate: "15.10.2024",
-    favoriteTopic: "Toplama",
-    achievements: [
-      {
-        id: "first_correct",
-        name: "İlk Adım",
-        description: "İlk doğru cevabı ver",
-        unlocked: true,
-        icon: <Star className="w-6 h-6" />
-      },
-      {
-        id: "streak_master",
-        name: "Serbest Usta",
-        description: "7 gün üst üste oyna",
-        unlocked: true,
-        icon: <TrendingUp className="w-6 h-6" />
-      },
-      {
-        id: "math_master",
-        name: "Matematik Ustası",
-        description: "100 doğru cevap ver",
-        unlocked: true,
-        icon: <Trophy className="w-6 h-6" />
-      },
-      {
-        id: "speed_demon",
-        name: "Hız Canavarı",
-        description: "10 saniyeden kısa sürede 5 cevap ver",
-        unlocked: false,
-        icon: <Zap className="w-6 h-6" />
-      },
-      {
-        id: "perfect_round",
-        name: "Mükemmel Tur",
-        description: "10 soruda 10 doğru cevap",
-        unlocked: false,
-        icon: <Award className="w-6 h-6" />
-      },
-      {
-        id: "math_king",
-        name: "Matematik Kralı",
-        description: "500 doğru cevap ver",
-        unlocked: false,
-        icon: <Crown className="w-6 h-6" />
+  const [stats, setStats] = useState<StudentStats>(() => {
+    // Load from localStorage or use initial data
+    if (typeof window !== 'undefined') {
+      const savedStats = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (savedStats) {
+        const parsedStats = JSON.parse(savedStats);
+        // Ensure icons are re-rendered as ReactNodes
+        return {
+          ...parsedStats,
+          achievements: parsedStats.achievements.map((ach: any) => ({
+            ...ach,
+            icon: ach.id === "first_correct" ? <Star className="w-6 h-6" /> :
+                  ach.id === "streak_master" ? <TrendingUp className="w-6 h-6" /> :
+                  ach.id === "math_master" ? <Trophy className="w-6 h-6" /> :
+                  ach.id === "speed_demon" ? <Zap className="w-6 h-6" /> :
+                  ach.id === "perfect_round" ? <Award className="w-6 h-6" /> :
+                  ach.id === "math_king" ? <Crown className="w-6 h-6" /> : null
+          }))
+        };
       }
-    ]
+    }
+    // Initial data if nothing in localStorage
+    return {
+      name: "Ali",
+      level: 1,
+      experience: 0,
+      totalQuestions: 0,
+      correctAnswers: 0,
+      streak: 0,
+      joinDate: new Date().toLocaleDateString('tr-TR'),
+      favoriteTopic: "Henüz Yok",
+      achievements: [
+        {
+          id: "first_correct",
+          name: "İlk Adım",
+          description: "İlk doğru cevabı ver",
+          unlocked: false,
+          icon: <Star className="w-6 h-6" />
+        },
+        {
+          id: "streak_3_days",
+          name: "Seri Başlangıcı",
+          description: "3 gün üst üste oyna",
+          unlocked: false,
+          icon: <TrendingUp className="w-6 h-6" />
+        },
+        {
+          id: "math_master",
+          name: "Matematik Ustası",
+          description: "100 doğru cevap ver",
+          unlocked: false,
+          icon: <Trophy className="w-6 h-6" />
+        },
+        {
+          id: "speed_demon",
+          name: "Hız Canavarı",
+          description: "10 saniyeden kısa sürede 5 cevap ver",
+          unlocked: false,
+          icon: <Zap className="w-6 h-6" />
+        },
+        {
+          id: "perfect_round",
+          name: "Mükemmel Tur",
+          description: "10 soruda 10 doğru cevap",
+          unlocked: false,
+          icon: <Award className="w-6 h-6" />
+        },
+        {
+          id: "math_king",
+          name: "Matematik Kralı",
+          description: "500 doğru cevap ver",
+          unlocked: false,
+          icon: <Crown className="w-6 h-6" />
+        }
+      ]
+    };
   });
 
-  const [showLevelUp, setShowLevelUp] = useState(false);
+  // Save stats to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(stats));
+    }
+  }, [stats]);
+
+  // Function to update stats from game pages
+  const updateStats = (newCorrectAnswers: number, newTotalQuestions: number, pointsEarned: number) => {
+    setStats(prevStats => {
+      const updatedStats = {
+        ...prevStats,
+        correctAnswers: prevStats.correctAnswers + newCorrectAnswers,
+        totalQuestions: prevStats.totalQuestions + newTotalQuestions,
+        experience: prevStats.experience + pointsEarned,
+      };
+
+      // Check for level up
+      const experienceForNextLevel = updatedStats.level * 200;
+      if (updatedStats.experience >= experienceForNextLevel) {
+        updatedStats.level += 1;
+        updatedStats.experience -= experienceForNextLevel; // Carry over remaining XP
+        showSuccess(`Tebrikler! Seviye ${updatedStats.level}'e ulaştın! 🎉`);
+      }
+
+      // Check for achievements
+      updatedStats.achievements = updatedStats.achievements.map(ach => {
+        if (!ach.unlocked) {
+          if (ach.id === "first_correct" && updatedStats.correctAnswers >= 1) {
+            showSuccess(`Başarı: ${ach.name} açıldı!`);
+            return { ...ach, unlocked: true };
+          }
+          if (ach.id === "math_master" && updatedStats.correctAnswers >= 100) {
+            showSuccess(`Başarı: ${ach.name} açıldı!`);
+            return { ...ach, unlocked: true };
+          }
+          if (ach.id === "math_king" && updatedStats.correctAnswers >= 500) {
+            showSuccess(`Başarı: ${ach.name} açıldı!`);
+            return { ...ach, unlocked: true };
+          }
+          // Add logic for other achievements like streak, speed_demon, perfect_round
+          // These might require more complex tracking in game pages or a global state
+        }
+        return ach;
+      });
+
+      return updatedStats;
+    });
+  };
+
+  // Expose updateStats function globally or via context for game pages to use
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).updateStudentStats = updateStats;
+    }
+  }, [stats]); // Re-bind if stats change (though updateStats itself handles state)
+
 
   const getExperienceForNextLevel = () => {
     return stats.level * 200;

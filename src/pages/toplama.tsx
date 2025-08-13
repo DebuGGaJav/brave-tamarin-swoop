@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Star, Trophy } from "lucide-react";
@@ -8,7 +8,7 @@ import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
 import CandyCrushGame from "@/components/CandyCrushGame";
-import NumberOrderingGame from "@/components/NumberOrderingGame"; // Yeni mini oyunu import et
+import NumberOrderingGame from "@/components/NumberOrderingGame";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 
@@ -17,14 +17,14 @@ const ToplamaPage = () => {
   const [num2, setNum2] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
   const [feedback, setFeedback] = useState<boolean | null>(null);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0); // This will now track session-specific correct answers
+  const [totalQuestions, setTotalQuestions] = useState(0); // This will now track session-specific total questions
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
-  const [totalPoints, setTotalPoints] = useState(0);
-  const [showCandyCrush, setShowCandyCrush] = useState(false); // Candy Crush için
-  const [showNumberOrdering, setShowNumberOrdering] = useState(false); // Yeni oyun için
+  const [sessionPoints, setSessionPoints] = useState(0); // Points earned in current session
+  const [showCandyCrush, setShowCandyCrush] = useState(false);
+  const [showNumberOrdering, setShowNumberOrdering] = useState(false);
 
   const generateNumbers = () => {
     let max = difficulty === "easy" ? 5 : difficulty === "medium" ? 10 : 20;
@@ -37,11 +37,11 @@ const ToplamaPage = () => {
   const checkAnswer = () => {
     const correct = parseInt(userAnswer) === num1 + num2;
     setFeedback(correct);
-    setTotalQuestions(totalQuestions + 1);
+    setTotalQuestions(prev => prev + 1); // Update session total questions
     
     if (correct) {
-      setCorrectAnswers(correctAnswers + 1);
-      setTotalPoints(prev => prev + 10);
+      setCorrectAnswers(prev => prev + 1); // Update session correct answers
+      setSessionPoints(prev => prev + 10); // Update session points
       setCharacterMood("happy");
       playSuccessSound();
     } else {
@@ -51,27 +51,46 @@ const ToplamaPage = () => {
   };
 
   const nextQuestion = () => {
+    // Call the global update function to persist session data
+    if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
+      (window as any).updateStudentStats(correctAnswers, totalQuestions, sessionPoints);
+    }
+
     generateNumbers();
     setCharacterMood("neutral");
-    // Mini oyunları tetikleme mantığı
-    if (totalPoints >= 50 && totalPoints < 100 && !showCandyCrush) {
+    
+    // Reset session stats for the new question/round
+    setCorrectAnswers(0);
+    setTotalQuestions(0);
+    setSessionPoints(0);
+
+    // Mini oyunları tetikleme mantığı (bu kısım StudentProfile'dan gelen totalPoints'e göre ayarlanmalı)
+    // Şimdilik sessionPoints üzerinden devam edelim, ancak gerçekte StudentProfile'daki totalPoints kullanılmalı
+    // Bu kısım için StudentProfile'dan totalPoints'i çekmek için bir mekanizma gerekebilir (Context API gibi)
+    // Veya mini oyun tetikleme mantığını StudentProfile içine taşımak daha mantıklı olabilir.
+    // Şimdilik, basitlik adına sessionPoints'i kullanmaya devam edelim.
+    if (sessionPoints >= 50 && sessionPoints < 100 && !showCandyCrush) {
       setShowCandyCrush(true);
-    } else if (totalPoints >= 100 && !showNumberOrdering) {
+    } else if (sessionPoints >= 100 && !showNumberOrdering) {
       setShowNumberOrdering(true);
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     generateNumbers();
-  });
+  }, []);
 
   const handleCandyCrushEnd = (gameScore: number) => {
-    setTotalPoints(prev => prev + gameScore);
+    if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
+      (window as any).updateStudentStats(0, 0, gameScore); // Only add game score
+    }
     setShowCandyCrush(false);
   };
 
   const handleNumberOrderingEnd = (gameScore: number) => {
-    setTotalPoints(prev => prev + gameScore);
+    if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
+      (window as any).updateStudentStats(0, 0, gameScore); // Only add game score
+    }
     setShowNumberOrdering(false);
   };
 
@@ -144,8 +163,8 @@ const ToplamaPage = () => {
         <ProgressTracker topic="Toplama" correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
         
         <div className="mt-8 text-center">
-          <h2 className="text-xl sm:text-2xl font-bold text-purple-600">Toplam Puan: {totalPoints}</h2>
-          {totalPoints >= 50 && !showCandyCrush && !showNumberOrdering && (
+          <h2 className="text-xl sm:text-2xl font-bold text-purple-600">Oturum Puanı: {sessionPoints}</h2>
+          {sessionPoints >= 50 && !showCandyCrush && !showNumberOrdering && (
             <Button 
               onClick={() => setShowCandyCrush(true)} 
               className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg"
@@ -153,7 +172,7 @@ const ToplamaPage = () => {
               Mini Oyunu Oyna! (Şeker Patlatma)
             </Button>
           )}
-          {totalPoints >= 100 && !showNumberOrdering && (
+          {sessionPoints >= 100 && !showNumberOrdering && (
             <Button 
               onClick={() => setShowNumberOrdering(true)} 
               className="mt-4 ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg"
