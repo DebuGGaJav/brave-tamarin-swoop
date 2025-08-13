@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Gem, Sparkles, XCircle } from 'lucide-react';
@@ -7,61 +7,98 @@ import { showSuccess, showError } from '@/utils/toast';
 
 const candies = ['🍬', '🍭', '🍫', '🍩', '🍪', '🧁'];
 const BOARD_SIZE = 8;
+const MIN_MATCH = 3;
 
 type Board = string[][];
+type Position = { r: number; c: number };
 
-const generateBoard = (): Board => {
-  const board: Board = [];
-  for (let i = 0; i < BOARD_SIZE; i++) {
-    board.push([]);
-    for (let j = 0; j < BOARD_SIZE; j++) {
-      board[i].push(candies[Math.floor(Math.random() * candies.length)]);
+const generateInitialBoard = (): Board => {
+  let board: Board;
+  do {
+    board = [];
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      board.push([]);
+      for (let j = 0; j < BOARD_SIZE; j++) {
+        let newCandy: string;
+        do {
+          newCandy = candies[Math.floor(Math.random() * candies.length)];
+        } while (
+          (j >= MIN_MATCH - 1 && board[i][j - 1] === newCandy && board[i][j - 2] === newCandy) ||
+          (i >= MIN_MATCH - 1 && board[i - 1][j] === newCandy && board[i - 2][j] === newCandy)
+        );
+        board[i].push(newCandy);
+      }
     }
-  }
+  } while (findMatches(board).length > 0); // Ensure no initial matches
   return board;
 };
 
-const checkMatches = (board: Board): { newBoard: Board, matchesFound: boolean } => {
-  let newBoard = board.map(row => [...row]);
-  let matchesFound = false;
+const findMatches = (board: Board): Position[] => {
+  const matches: Position[] = [];
 
   // Check horizontal matches
   for (let r = 0; r < BOARD_SIZE; r++) {
-    for (let c = 0; c < BOARD_SIZE - 2; c++) {
-      if (newBoard[r][c] === newBoard[r][c+1] && newBoard[r][c+1] === newBoard[r][c+2]) {
-        newBoard[r][c] = '';
-        newBoard[r][c+1] = '';
-        newBoard[r][c+2] = '';
-        matchesFound = true;
+    for (let c = 0; c < BOARD_SIZE - (MIN_MATCH - 1); c++) {
+      const currentCandy = board[r][c];
+      if (currentCandy === '') continue; // Skip empty cells
+      let matchCount = 1;
+      for (let k = 1; k < MIN_MATCH; k++) {
+        if (board[r][c + k] === currentCandy) {
+          matchCount++;
+        } else {
+          break;
+        }
+      }
+      if (matchCount >= MIN_MATCH) {
+        for (let k = 0; k < matchCount; k++) {
+          matches.push({ r, c: c + k });
+        }
       }
     }
   }
 
   // Check vertical matches
   for (let c = 0; c < BOARD_SIZE; c++) {
-    for (let r = 0; r < BOARD_SIZE - 2; r++) {
-      if (newBoard[r][c] === newBoard[r+1][c] && newBoard[r+1][c] === newBoard[r+2][c]) {
-        newBoard[r][c] = '';
-        newBoard[r+1][c] = '';
-        newBoard[r+2][c] = '';
-        matchesFound = true;
+    for (let r = 0; r < BOARD_SIZE - (MIN_MATCH - 1); r++) {
+      const currentCandy = board[r][c];
+      if (currentCandy === '') continue; // Skip empty cells
+      let matchCount = 1;
+      for (let k = 1; k < MIN_MATCH; k++) {
+        if (board[r + k][c] === currentCandy) {
+          matchCount++;
+        } else {
+          break;
+        }
+      }
+      if (matchCount >= MIN_MATCH) {
+        for (let k = 0; k < matchCount; k++) {
+          matches.push({ r: r + k, c });
+        }
       }
     }
   }
-  return { newBoard, matchesFound };
+  return matches;
+};
+
+const clearMatches = (board: Board, matches: Position[]): Board => {
+  const newBoard = board.map(row => [...row]);
+  matches.forEach(({ r, c }) => {
+    newBoard[r][c] = ''; // Clear matched candies
+  });
+  return newBoard;
 };
 
 const applyGravity = (board: Board): Board => {
   const newBoard = board.map(row => [...row]);
   for (let c = 0; c < BOARD_SIZE; c++) {
-    let emptyCells: number[] = [];
+    let emptyRow = BOARD_SIZE - 1;
     for (let r = BOARD_SIZE - 1; r >= 0; r--) {
-      if (newBoard[r][c] === '') {
-        emptyCells.push(r);
-      } else if (emptyCells.length > 0) {
-        newBoard[emptyCells.shift()!][c] = newBoard[r][c];
-        newBoard[r][c] = '';
-        emptyCells.push(r);
+      if (newBoard[r][c] !== '') {
+        newBoard[emptyRow][c] = newBoard[r][c];
+        if (emptyRow !== r) {
+          newBoard[r][c] = '';
+        }
+        emptyRow--;
       }
     }
   }
@@ -86,27 +123,49 @@ interface CandyCrushGameProps {
 }
 
 const CandyCrushGame: React.FC<CandyCrushGameProps> = ({ onGameEnd, onClose }) => {
-  const [board, setBoard] = useState<Board>(generateBoard());
+  const [board, setBoard] = useState<Board>(generateInitialBoard());
   const [score, setScore] = useState(0);
-  const [movesLeft, setMovesLeft] = useState(10);
-  const [selectedCandy, setSelectedCandy] = useState<{ r: number, c: number } | null>(null);
+  const [movesLeft, setMovesLeft] = useState(20); // Increased moves for better playability
+  const [selectedCandy, setSelectedCandy] = useState<Position | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false); // To prevent rapid clicks during animation
 
-  useEffect(() => {
-    let currentBoard = board;
-    let matchesFound = true;
-    while (matchesFound) {
-      const { newBoard, matchesFound: found } = checkMatches(currentBoard);
-      currentBoard = applyGravity(newBoard);
-      currentBoard = fillEmptyCells(currentBoard);
-      matchesFound = found;
-      if (found) {
-        setScore(prev => prev + 10); // Score for each match
+  const processBoard = useCallback(async (currentBoard: Board) => {
+    setIsProcessing(true);
+    let boardChanged = true;
+    let tempScore = 0;
+
+    while (boardChanged) {
+      boardChanged = false;
+      const matches = findMatches(currentBoard);
+      if (matches.length > 0) {
+        tempScore += matches.length * 10; // Score based on number of candies cleared
+        currentBoard = clearMatches(currentBoard, matches);
+        setBoard(currentBoard); // Update UI to show cleared candies
+        await new Promise(resolve => setTimeout(resolve, 300)); // Short delay for visual effect
+
+        currentBoard = applyGravity(currentBoard);
+        setBoard(currentBoard); // Update UI to show gravity
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        currentBoard = fillEmptyCells(currentBoard);
+        setBoard(currentBoard); // Update UI to show new candies
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        boardChanged = true; // Keep looping if new matches formed
       }
     }
-    setBoard(currentBoard);
-  }, [board]);
+    setScore(prev => prev + tempScore);
+    setIsProcessing(false);
+  }, []);
 
-  const handleCandyClick = (r: number, c: number) => {
+  useEffect(() => {
+    // Initial board processing to clear any accidental matches from generation
+    processBoard(board);
+  }, []); // Run only once on mount
+
+  const handleCandyClick = async (r: number, c: number) => {
+    if (isProcessing || movesLeft <= 0) return;
+
     if (selectedCandy) {
       const [r1, c1] = [selectedCandy.r, selectedCandy.c];
       const [r2, c2] = [r, c];
@@ -117,29 +176,35 @@ const CandyCrushGame: React.FC<CandyCrushGameProps> = ({ onGameEnd, onClose }) =
       if (isAdjacent) {
         const newBoard = board.map(row => [...row]);
         [newBoard[r1][c1], newBoard[r2][c2]] = [newBoard[r2][c2], newBoard[r1][c1]];
-        
-        const { matchesFound } = checkMatches(newBoard);
-        if (matchesFound) {
-          setBoard(newBoard);
+        setBoard(newBoard); // Optimistically update UI
+
+        const matchesAfterSwap = findMatches(newBoard);
+        if (matchesAfterSwap.length > 0) {
           setMovesLeft(prev => prev - 1);
+          setSelectedCandy(null);
+          await processBoard(newBoard); // Process cascades
         } else {
+          // If no match, swap back
           showError("Geçersiz hamle! Eşleşme yok.");
+          [newBoard[r1][c1], newBoard[r2][c2]] = [newBoard[r2][c2], newBoard[r1][c1]]; // Swap back
+          setBoard(newBoard); // Update UI to swap back
+          setSelectedCandy(null);
         }
       } else {
         showError("Sadece bitişik şekerleri değiştirebilirsin.");
+        setSelectedCandy({ r, c }); // Select new candy if not adjacent
       }
-      setSelectedCandy(null);
     } else {
       setSelectedCandy({ r, c });
     }
   };
 
   useEffect(() => {
-    if (movesLeft <= 0) {
+    if (movesLeft <= 0 && !isProcessing) {
       showSuccess(`Oyun bitti! Puanınız: ${score}`);
       onGameEnd(score);
     }
-  }, [movesLeft, score, onGameEnd]);
+  }, [movesLeft, score, onGameEnd, isProcessing]);
 
   return (
     <Card className="w-full max-w-lg mx-auto bg-gradient-to-br from-pink-100 to-purple-100 shadow-2xl border-4 border-pink-300">
@@ -165,10 +230,10 @@ const CandyCrushGame: React.FC<CandyCrushGameProps> = ({ onGameEnd, onClose }) =
             const isSelected = selectedCandy && selectedCandy.r === r && selectedCandy.c === c;
             return (
               <motion.div
-                key={index}
+                key={`${r}-${c}-${candy}`} // Unique key for animation
                 className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-2xl sm:text-3xl rounded-md cursor-pointer transition-all duration-100 ${
                   isSelected ? 'ring-4 ring-blue-500 scale-110' : ''
-                }`}
+                } ${isProcessing ? 'pointer-events-none opacity-70' : ''}`}
                 onClick={() => handleCandyClick(r, c)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
