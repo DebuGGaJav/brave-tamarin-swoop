@@ -50,17 +50,17 @@ export const DifficultySelector = ({ onSelect, currentLevel }: DifficultySelecto
             <Button
               key={level.id}
               onClick={() => onSelect(level.id)}
-              className={`flex flex-col items-center p-4 h-auto space-y-2 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${
+              className={`flex flex-col items-center p-2 sm:p-4 h-auto space-y-1 sm:space-y-2 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${
                 currentLevel === level.id
                   ? `${level.color} ${level.borderColor} border-2 ring-2 ring-offset-2`
-                  : "bg-gray-100 hover:bg-gray-200 border-2 border-gray-300"
+                  : "bg-gray-100 hover:bg-gray-200 border-2 border-gray-300 text-gray-800" // Metin rengi eklendi
               } ${level.hoverColor}`}
             >
-              <div className="p-2 rounded-full bg-white/20 backdrop-blur-sm">
+              <div className="p-1 sm:p-2 rounded-full bg-white/20 backdrop-blur-sm">
                 {level.icon}
               </div>
-              <span className="text-sm font-bold">{level.name}</span>
-              <span className="text-xs opacity-90">{level.description}</span>
+              <span className="text-sm sm:text-base font-bold text-center">{level.name}</span> {/* text-center eklendi */}
+              <span className="text-xs sm:text-sm opacity-90 text-center">{level.description}</span> {/* text-center eklendi */}
             </Button>
           ))}
         </div>

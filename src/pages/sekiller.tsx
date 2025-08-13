@@ -209,7 +209,7 @@ const SekillerPage = () => {
                       className={`p-3 sm:p-4 h-auto text-base sm:text-lg font-medium transition-all duration-200 ${
                         userAnswer === option
                           ? "bg-purple-600 text-white shadow-lg transform scale-105"
-                          : "bg-gray-100 hover:bg-gray-200 hover:shadow-md"
+                          : "bg-gray-100 text-gray-800 hover:bg-gray-200 hover:shadow-md"
                       }`}
                       disabled={feedback !== null}
                     >
