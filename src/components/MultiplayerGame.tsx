@@ -85,6 +85,8 @@ export default function MultiplayerGame() {
         setTimeLeft(10);
         setUserAnswer("");
       }, 2000);
+    } else {
+      setGameStarted(false); // End game after 10 rounds
     }
   };
 
@@ -99,89 +101,96 @@ export default function MultiplayerGame() {
 
   const startGame = () => {
     setGameStarted(true);
+    setRound(1);
+    setPlayers(players.map(p => ({ ...p, score: 0 }))); // Reset scores
     generateQuestion();
+    setTimeLeft(10);
+    setUserAnswer("");
   };
 
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-4">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-purple-600 mb-2">Çok Oyunculu Yarışma</h1>
-          <p className="text-xl text-gray-600">Hızlı Matematik Yarışması</p>
+        <div className="text-center mb-8 sm:mb-10">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-purple-600 mb-2">Çok Oyunculu Yarışma</h1>
+          <p className="text-lg sm:text-xl text-gray-600">Hızlı Matematik Yarışması</p>
         </div>
 
         {!gameStarted ? (
-          <Card className="max-w-md mx-auto">
+          <Card className="max-w-md mx-auto shadow-xl border-2 border-purple-200">
             <CardHeader>
-              <CardTitle className="text-center">Yarışmaya Katıl</CardTitle>
+              <CardTitle className="text-center text-xl sm:text-2xl text-purple-600">Yarışmaya Katıl</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="mb-4">4 oyuncu ile yarış!</p>
-              <Button onClick={startGame} className="bg-purple-600 hover:bg-purple-700">
+              <p className="mb-4 text-base sm:text-lg text-gray-700">4 oyuncu ile yarış!</p>
+              <Button onClick={startGame} className="bg-purple-600 hover:bg-purple-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl">
                 Yarışmaya Başla
               </Button>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-6">
-            <Card>
+            <Card className="shadow-xl border-2 border-purple-200">
               <CardHeader>
-                <CardTitle className="text-center">Tur {round} / 10</CardTitle>
+                <CardTitle className="text-center text-xl sm:text-2xl text-purple-600">Tur {round} / 10</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-purple-700 mb-4">
+                  <div className="text-4xl sm:text-5xl font-bold text-purple-700 mb-4">
                     {currentQuestion.question}
                   </div>
                   <div className="flex justify-center items-center space-x-4 mb-4">
-                    <Clock className="w-6 h-6 text-red-500" />
-                    <span className="text-2xl font-bold text-red-500">{timeLeft}s</span>
+                    <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
+                    <span className="text-2xl sm:text-3xl font-bold text-red-500">{timeLeft}s</span>
                   </div>
                   <input
                     type="number"
                     value={userAnswer}
                     onChange={(e) => setUserAnswer(e.target.value)}
-                    className="w-32 h-16 text-2xl text-center border-2 border-purple-300 rounded-lg"
+                    className="w-32 h-16 text-2xl sm:text-3xl text-center border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="?"
                   />
-                  <Button onClick={handleAnswer} className="ml-4 bg-purple-600">
+                  <Button onClick={handleAnswer} className="ml-4 bg-purple-600 hover:bg-purple-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl">
                     Cevapla
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               {sortedPlayers.map((player, index) => (
-                <Card key={player.id} className={index === 0 ? "border-2 border-yellow-400" : ""}>
-                  <CardContent className="p-4">
+                <Card key={player.id} className={`shadow-xl border-2 ${index === 0 ? "border-yellow-400" : "border-gray-200"}`}>
+                  <CardContent className="p-4 sm:p-5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <span className="text-2xl">{player.avatar}</span>
+                        <span className="text-2xl sm:text-3xl">{player.avatar}</span>
                         <div>
-                          <div className="font-bold">{player.name}</div>
+                          <div className="font-bold text-base sm:text-lg">{player.name}</div>
                           <div className="text-sm text-gray-500">Puan: {player.score}</div>
                         </div>
                       </div>
                       <div className="flex items-center">
-                        {index === 0 && <Trophy className="w-5 h-5 text-yellow-500" />}
-                        <span className="ml-2 text-lg font-bold">#{index + 1}</span>
+                        {index === 0 && <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />}
+                        <span className="ml-2 text-lg sm:text-xl font-bold">#{index + 1}</span>
                       </div>
                     </div>
-                    <Progress value={(player.score / 100) * 100} className="mt-2 h-2" />
+                    <Progress value={(player.score / 100) * 100} className="mt-2 h-2 sm:h-3" />
                   </CardContent>
                 </Card>
               ))}
             </div>
 
             {round === 10 && (
-              <Card className="text-center">
-                <CardContent className="p-6">
-                  <Trophy className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold mb-2">Yarışma Bitti!</h3>
-                  <p className="text-lg">Kazanan: {sortedPlayers[0].name} 🎉</p>
+              <Card className="text-center shadow-xl border-2 border-purple-200">
+                <CardContent className="p-6 sm:p-8">
+                  <Trophy className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500 mx-auto mb-4" />
+                  <h3 className="text-2xl sm:text-3xl font-bold mb-2">Yarışma Bitti!</h3>
+                  <p className="text-lg sm:text-xl">Kazanan: {sortedPlayers[0].name} 🎉</p>
+                  <Button onClick={startGame} className="mt-6 bg-purple-600 hover:bg-purple-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl">
+                    Tekrar Oyna
+                  </Button>
                 </CardContent>
               </Card>
             )}
