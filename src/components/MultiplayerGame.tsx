@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trophy, Users, Clock } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { showSuccess, showError } from "@/utils/toast";
 
 interface Player {
   id: string;
@@ -16,6 +17,9 @@ interface Question {
   answer: number;
   type: "toplama" | "cikarma";
 }
+
+const GAME_ROUNDS = 10;
+const ROUND_DURATION = 10; // seconds
 
 export default function MultiplayerGame() {
   const [players, setPlayers] = useState<Player[]>([
@@ -31,9 +35,12 @@ export default function MultiplayerGame() {
     type: "toplama"
   });
   const [userAnswer, setUserAnswer] = useState("");
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(ROUND_DURATION);
   const [gameStarted, setGameStarted] = useState(false);
   const [round, setRound] = useState(1);
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+  const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const generateQuestion = () => {
     const num1 = Math.floor(Math.random() * 10) + 1;
@@ -55,57 +62,72 @@ export default function MultiplayerGame() {
         type: "cikarma"
       });
     }
+    setUserAnswer("");
+    setFeedbackMessage(null);
+    setIsCorrectAnswer(null);
+    inputRef.current?.focus();
   };
 
-  useEffect(() => {
-    if (gameStarted && timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0) {
-      handleTimeUp();
-    }
-  }, [timeLeft, gameStarted]);
-
-  const handleTimeUp = () => {
-    const updatedPlayers = [...players];
-    updatedPlayers.forEach((player, index) => {
-      if (index > 0) {
+  const processRoundEnd = () => {
+    const updatedPlayers = players.map((player, index) => {
+      if (index === 0) { // Kullanıcı oyuncusu
+        return player; // Kullanıcının puanı handleAnswer'da güncelleniyor
+      } else { // Bilgisayar oyuncuları
+        const newPlayer = { ...player };
         const randomAnswer = Math.random() > 0.3 ? currentQuestion.answer : currentQuestion.answer + Math.floor(Math.random() * 3) - 1;
         if (randomAnswer === currentQuestion.answer) {
-          player.score += 10;
+          newPlayer.score += 10;
         }
+        return newPlayer;
       }
     });
     setPlayers(updatedPlayers);
-    
-    if (round < 10) {
+
+    if (round < GAME_ROUNDS) {
       setTimeout(() => {
-        setRound(round + 1);
+        setRound(prev => prev + 1);
+        setTimeLeft(ROUND_DURATION);
         generateQuestion();
-        setTimeLeft(10);
-        setUserAnswer("");
-      }, 2000);
+      }, 1500); // Geri bildirim süresi
     } else {
-      setGameStarted(false); // End game after 10 rounds
+      setGameStarted(false); // Oyun bitti
+      showSuccess("Oyun Bitti! Sonuçlar açıklandı.");
     }
   };
 
-  const handleAnswer = () => {
-    if (parseInt(userAnswer) === currentQuestion.answer) {
-      const updatedPlayers = [...players];
-      updatedPlayers[0].score += 10;
-      setPlayers(updatedPlayers);
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (gameStarted && timeLeft > 0) {
+      timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+    } else if (timeLeft === 0 && gameStarted) {
+      processRoundEnd();
     }
-    handleTimeUp();
+    return () => clearTimeout(timer);
+  }, [timeLeft, gameStarted, round]); // round'u bağımlılıklara ekledik
+
+  const handleAnswer = () => {
+    if (!gameStarted || userAnswer === "") return;
+
+    const isCorrect = parseInt(userAnswer) === currentQuestion.answer;
+    setIsCorrectAnswer(isCorrect);
+    setFeedbackMessage(isCorrect ? "🎉 Doğru cevap! 🎉" : `❌ Yanlış! Doğru cevap: ${currentQuestion.answer} ❌`);
+
+    if (isCorrect) {
+      setPlayers(prevPlayers => prevPlayers.map(p => p.id === "1" ? { ...p, score: p.score + 10 } : p));
+    } else {
+      showError("Yanlış cevap!");
+    }
+    
+    // Kullanıcı cevapladığında turu bitir ve bir sonraki tura geç
+    setTimeLeft(0); // Zamanı sıfırlayarak processRoundEnd'i tetikle
   };
 
   const startGame = () => {
     setGameStarted(true);
     setRound(1);
-    setPlayers(players.map(p => ({ ...p, score: 0 }))); // Reset scores
+    setPlayers(players.map(p => ({ ...p, score: 0 }))); // Skorları sıfırla
     generateQuestion();
-    setTimeLeft(10);
-    setUserAnswer("");
+    setTimeLeft(ROUND_DURATION);
   };
 
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
@@ -134,7 +156,7 @@ export default function MultiplayerGame() {
           <div className="space-y-6">
             <Card className="shadow-xl border-2 border-purple-200">
               <CardHeader>
-                <CardTitle className="text-center text-xl sm:text-2xl text-purple-600">Tur {round} / 10</CardTitle>
+                <CardTitle className="text-center text-xl sm:text-2xl text-purple-600">Tur {round} / {GAME_ROUNDS}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center">
@@ -149,13 +171,20 @@ export default function MultiplayerGame() {
                     type="number"
                     value={userAnswer}
                     onChange={(e) => setUserAnswer(e.target.value)}
+                    onKeyPress={(e) => { if (e.key === 'Enter') handleAnswer(); }}
                     className="w-32 h-16 text-2xl sm:text-3xl text-center border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="?"
+                    ref={inputRef}
                   />
                   <Button onClick={handleAnswer} className="ml-4 bg-purple-600 hover:bg-purple-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl">
                     Cevapla
                   </Button>
                 </div>
+                {feedbackMessage && (
+                  <div className={`mt-4 text-center text-lg font-bold p-3 rounded-lg ${isCorrectAnswer ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                    {feedbackMessage}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -176,13 +205,13 @@ export default function MultiplayerGame() {
                         <span className="ml-2 text-lg sm:text-xl font-bold">#{index + 1}</span>
                       </div>
                     </div>
-                    <Progress value={(player.score / 100) * 100} className="mt-2 h-2 sm:h-3" />
+                    <Progress value={(player.score / (GAME_ROUNDS * 10)) * 100} className="mt-2 h-2 sm:h-3" />
                   </CardContent>
                 </Card>
               ))}
             </div>
 
-            {round === 10 && (
+            {round === GAME_ROUNDS && !gameStarted && ( // Oyun bittiğinde bu kartı göster
               <Card className="text-center shadow-xl border-2 border-purple-200">
                 <CardContent className="p-6 sm:p-8">
                   <Trophy className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500 mx-auto mb-4" />
