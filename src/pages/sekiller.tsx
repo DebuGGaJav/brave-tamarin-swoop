@@ -9,6 +9,7 @@ import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
 import CandyCrushGame from "@/components/CandyCrushGame"; // Import the new game component
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { motion } from "framer-motion"; // framer-motion import edildi
 
 interface ShapeQuestion {
   shape: string;
@@ -197,13 +198,17 @@ const SekillerPage = () => {
               <MathCharacter mood={characterMood} />
 
               {showResult && (
-                <div className={`text-center text-lg sm:text-xl font-bold mb-4 p-3 sm:p-4 rounded-lg ${
-                  isCorrect 
-                    ? 'bg-green-100 text-green-600 border-2 border-green-300' 
-                    : 'bg-red-100 text-red-600 border-2 border-red-300'
-                }`}>
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`text-center text-lg sm:text-xl font-bold mb-4 p-3 sm:p-4 rounded-lg ${
+                    isCorrect 
+                      ? 'bg-green-100 text-green-600 border-2 border-green-300' 
+                      : 'bg-red-100 text-red-600 border-2 border-red-300'
+                  }`}>
                   {isCorrect ? '🎉 Doğru cevap! 🎉' : '❌ Yanlış, tekrar deneyin! ❌'}
-                </div>
+                </motion.div>
               )}
 
               <div className="flex justify-center space-x-4">

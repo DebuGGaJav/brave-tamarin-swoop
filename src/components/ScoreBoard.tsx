@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Star, Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion"; // framer-motion import edildi
 
 interface ScoreBoardProps {
   correctAnswers: number;
@@ -9,16 +10,24 @@ interface ScoreBoardProps {
 
 export const ScoreBoard = ({ correctAnswers, totalQuestions }: ScoreBoardProps) => {
   const [stars, setStars] = useState(0);
-  const [showAnimation, setShowAnimation] = useState(false);
+  const [showStarAnimation, setShowStarAnimation] = useState(false);
+  const [previousCorrectAnswers, setPreviousCorrectAnswers] = useState(correctAnswers);
 
   useEffect(() => {
     const newStars = Math.floor(correctAnswers / 3);
     if (newStars > stars) {
-      setShowAnimation(true);
-      setTimeout(() => setShowAnimation(false), 1000);
+      setShowStarAnimation(true);
+      setTimeout(() => setShowStarAnimation(false), 1000);
     }
     setStars(newStars);
-  }, [correctAnswers, stars]);
+
+    // Puan artışı animasyonu için
+    if (correctAnswers > previousCorrectAnswers) {
+      // Burada puan artışı animasyonu tetiklenebilir
+      // Örneğin, puan div'ine bir sınıf ekleyip kaldırabiliriz
+    }
+    setPreviousCorrectAnswers(correctAnswers);
+  }, [correctAnswers, stars, previousCorrectAnswers]);
 
   const getTrophyColor = () => {
     if (totalQuestions === 0) return "text-gray-400";
@@ -49,7 +58,15 @@ export const ScoreBoard = ({ correctAnswers, totalQuestions }: ScoreBoardProps) 
               <Trophy className={`w-6 h-6 ${getTrophyColor()}`} />
             </div>
             <div>
-              <div className="text-2xl font-bold text-gray-800">{correctAnswers}/{totalQuestions}</div>
+              <motion.div
+                key={correctAnswers} // correctAnswers değiştiğinde animasyonu tetikle
+                initial={{ scale: 1 }}
+                animate={{ scale: correctAnswers > previousCorrectAnswers ? [1, 1.2, 1] : 1 }}
+                transition={{ duration: 0.3 }}
+                className="text-2xl font-bold text-gray-800"
+              >
+                {correctAnswers}/{totalQuestions}
+              </motion.div>
               <div className="text-sm text-gray-500">Doğru Cevap</div>
             </div>
           </div>
@@ -61,7 +78,7 @@ export const ScoreBoard = ({ correctAnswers, totalQuestions }: ScoreBoardProps) 
                   star <= stars
                     ? "text-yellow-400"
                     : "text-gray-300"
-                } ${showAnimation && star === stars ? "animate-bounce" : ""}`}
+                } ${showStarAnimation && star === stars ? "animate-bounce" : ""}`}
               >
                 <Star className="w-8 h-8" />
                 {star <= stars && (

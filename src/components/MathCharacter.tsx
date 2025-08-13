@@ -11,7 +11,7 @@ export const MathCharacter = ({ mood, message }: MathCharacterProps) => {
 
   useEffect(() => {
     setIsAnimating(true);
-    const timer = setTimeout(() => setIsAnimating(false), 1000);
+    const timer = setTimeout(() => setIsAnimating(false), 500); // Animasyon süresine uygun hale getirildi
     return () => clearTimeout(timer);
   }, [mood]);
 
@@ -43,7 +43,7 @@ export const MathCharacter = ({ mood, message }: MathCharacterProps) => {
   };
 
   return (
-    <div className={`text-center transition-all duration-500 ${isAnimating ? 'scale-110' : 'scale-100'}`}>
+    <div className={`text-center transition-transform duration-300 ease-out ${isAnimating ? 'scale-110' : 'scale-100'}`}>
       <div className="relative inline-block">
         <img 
           src={getCharacterImage()} 
