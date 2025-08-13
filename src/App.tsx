@@ -16,7 +16,8 @@ import MultiplayerGame from "@/components/MultiplayerGame";
 import AchievementSystem from "@/components/AchievementSystem";
 import ProfilePage from "./pages/Profile";
 import CarpmaPage from "./pages/CarpmaPage";
-import BolmePage from "./pages/BolmePage"; // BolmePage'i import et
+import BolmePage from "./pages/BolmePage";
+import MixedOperationsPage from "./pages/MixedOperationsPage"; // MixedOperationsPage'i import et
 
 const queryClient = new QueryClient();
 
@@ -31,7 +32,8 @@ const App = () => (
           <Route path="/toplama" element={<ToplamaPage />} />
           <Route path="/cikarma" element={<CikarmaPage />} />
           <Route path="/carpma" element={<CarpmaPage />} />
-          <Route path="/bolme" element={<BolmePage />} /> {/* Yeni bölme rotasını ekle */}
+          <Route path="/bolme" element={<BolmePage />} />
+          <Route path="/karisik-islemler" element={<MixedOperationsPage />} /> {/* Yeni karışık işlemler rotasını ekle */}
           <Route path="/sayilar" element={<SayilarPage />} />
           <Route path="/sekiller" element={<SekillerPage />} />
           <Route path="/esitlik" element={<EsitlikPage />} />

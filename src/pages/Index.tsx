@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy, Sparkles, Users, Award, UserCheck, User, X, Divide } from "lucide-react";
+import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy, Sparkles, Users, Award, UserCheck, User, X, Divide, Shuffle } from "lucide-react"; // Shuffle icon eklendi
 import { useNavigate } from "react-router-dom";
 import { showSuccess } from "@/utils/toast";
 import { MathCharacter } from "@/components/MathCharacter";
@@ -46,6 +46,15 @@ const Index = () => {
       color: "bg-gradient-to-r from-indigo-400 to-indigo-500",
       borderColor: "border-indigo-400",
       hoverColor: "hover:from-indigo-500 hover:to-indigo-600"
+    },
+    {
+      title: "Karışık İşlemler",
+      icon: <Shuffle className="w-8 h-8" />, // Yeni ikon
+      description: "Tüm işlemler bir arada",
+      path: "/karisik-islemler",
+      color: "bg-gradient-to-r from-purple-600 to-pink-600", // Yeni renk
+      borderColor: "border-purple-600",
+      hoverColor: "hover:from-purple-700 hover:to-pink-700"
     },
     {
       title: "Sayılar",
