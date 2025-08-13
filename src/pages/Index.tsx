@@ -1,68 +1,87 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy } from "lucide-react";
+import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { showSuccess } from "@/utils/toast";
+import { MathCharacter } from "@/components/MathCharacter";
+import { useState } from "react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [characterMood, setCharacterMood] = useState<"happy" | "excited">("happy");
 
   const topics = [
     {
       title: "Toplama",
       icon: <Plus className="w-8 h-8" />,
       description: "Eğlenceli toplama işlemleri",
-      path: "/toplama"
+      path: "/toplama",
+      color: "bg-green-100 text-green-700"
     },
     {
       title: "Çıkarma",
       icon: <Minus className="w-8 h-8" />,
       description: "Eğlenceli çıkarma işlemleri",
-      path: "/cikarma"
+      path: "/cikarma",
+      color: "bg-red-100 text-red-700"
     },
     {
       title: "Sayılar",
       icon: <Hash className="w-8 h-8" />,
       description: "Sayıları öğrenelim",
-      path: "/sayilar"
+      path: "/sayilar",
+      color: "bg-blue-100 text-blue-700"
     },
     {
       title: "Şekiller",
       icon: <Shapes className="w-8 h-8" />,
       description: "Geometrik şekiller",
-      path: "/sekiller"
+      path: "/sekiller",
+      color: "bg-purple-100 text-purple-700"
     },
     {
       title: "Eşitlik",
       icon: <Equal className="w-8 h-8" />,
       description: "Eşitlik kavramı",
-      path: "/esitlik"
+      path: "/esitlik",
+      color: "bg-yellow-100 text-yellow-700"
     },
     {
       title: "Problem Çözme",
       icon: <Brain className="w-8 h-8" />,
       description: "Günlük problemler",
-      path: "/problem-cozme"
+      path: "/problem-cozme",
+      color: "bg-pink-100 text-pink-700"
     }
   ];
 
   const handleStart = (path: string) => {
+    setCharacterMood("excited");
     showSuccess("Harika! Hadi öğrenmeye başlayalım!");
-    navigate(path);
+    setTimeout(() => navigate(path), 500);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-purple-600 mb-2">
+          <div className="mb-4">
+            <MathCharacter 
+              mood={characterMood} 
+              message="Merhaba! Matematik dünyasına hoş geldin!"
+            />
+          </div>
+          
+          <h1 className="text-4xl font-bold text-purple-600 mb-2 flex items-center justify-center">
+            <Sparkles className="w-8 h-8 mr-2 text-yellow-500" />
             Matematik Dünyası
+            <Sparkles className="w-8 h-8 ml-2 text-yellow-500" />
           </h1>
           <p className="text-xl text-gray-600 mb-4">
             1. Sınıf Matematik Eğlencesi
           </p>
           <div className="flex justify-center">
-            <Trophy className="w-8 h-8 text-yellow-500" />
+            <Trophy className="w-8 h-8 text-yellow-500 animate-bounce" />
           </div>
         </div>
 
@@ -70,11 +89,11 @@ const Index = () => {
           {topics.map((topic, index) => (
             <Card 
               key={index} 
-              className="hover:shadow-lg transition-all duration-300 bg-white border-2 border-purple-200 hover:border-purple-400 hover:scale-105"
+              className="hover:shadow-xl transition-all duration-300 bg-white border-2 border-purple-200 hover:border-purple-400 hover:scale-105 group"
             >
               <CardHeader>
                 <div className="flex justify-center mb-4">
-                  <div className="p-3 bg-purple-100 rounded-full">
+                  <div className={`p-4 rounded-full ${topic.color} group-hover:scale-110 transition-transform duration-300`}>
                     {topic.icon}
                   </div>
                 </div>
@@ -88,13 +107,20 @@ const Index = () => {
               <CardContent className="flex justify-center">
                 <Button 
                   onClick={() => handleStart(topic.path)}
-                  className="bg-purple-600 hover:bg-purple-700"
+                  className="bg-purple-600 hover:bg-purple-700 group-hover:scale-105 transition-transform duration-300"
                 >
                   Başla
                 </Button>
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h3 className="text-lg font-bold text-purple-600 mb-2">Bugünün Hedefi</h3>
+            <p className="text-gray-600">5 doğru cevap = 1 yıldız kazanırsın!</p>
+          </div>
         </div>
       </div>
     </div>
