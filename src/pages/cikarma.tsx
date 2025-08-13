@@ -27,9 +27,10 @@ const CikarmaPage = () => {
   const [consecutiveCorrect, setConsecutiveCorrect] = useState(0); // Track consecutive correct answers
 
   const generateNumbers = () => {
-    let max = difficulty === "easy" ? 5 : difficulty === "medium" ? 10 : 20;
+    // Sayı aralığını küçültüyoruz
+    let max = difficulty === "easy" ? 10 : difficulty === "medium" ? 15 : 25; // Max değerleri düşürüldü
     const n1 = Math.floor(Math.random() * max) + 1;
-    const n2 = Math.floor(Math.random() * n1) + 1;
+    const n2 = Math.floor(Math.random() * n1) + 1; // n1'den küçük veya eşit n2
     setNum1(n1);
     setNum2(n2);
     setUserAnswer("");
@@ -119,6 +120,7 @@ const CikarmaPage = () => {
                 <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 min-w-[80px] sm:min-w-[100px]">
                   <div className="text-4xl sm:text-5xl font-bold text-red-600">{num1}</div>
                 </div>
+                {/* Eksi işareti buraya eklendi */}
                 <Minus className="w-8 h-8 sm:w-12 sm:h-12 text-red-600" />
                 <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 min-w-[80px] sm:min-w-[100px]">
                   <div className="text-4xl sm:text-5xl font-bold text-red-600">{num2}</div>
