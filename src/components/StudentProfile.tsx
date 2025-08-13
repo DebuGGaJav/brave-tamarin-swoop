@@ -5,6 +5,14 @@ import { Progress } from "@/components/ui/progress";
 import { Trophy, Star, Target, Zap, Award, Crown, TrendingUp, Calendar, BookOpen } from "lucide-react";
 import { showSuccess } from "@/utils/toast";
 
+interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  unlocked: boolean;
+  icon?: React.ReactNode; // Make icon optional for serialization
+}
+
 interface StudentStats {
   name: string;
   level: number;
@@ -14,41 +22,28 @@ interface StudentStats {
   streak: number;
   joinDate: string;
   favoriteTopic: string;
-  achievements: {
-    id: string;
-    name: string;
-    description: string;
-    unlocked: boolean;
-    icon: React.ReactNode;
-  }[];
+  achievements: Achievement[];
 }
 
 const LOCAL_STORAGE_KEY = "studentStats";
 
+// Helper function to get icon based on achievement ID
+const getAchievementIcon = (id: string): React.ReactNode => {
+  switch (id) {
+    case "first_correct": return <Star className="w-6 h-6" />;
+    case "streak_3_days": return <TrendingUp className="w-6 h-6" />;
+    case "math_master": return <Trophy className="w-6 h-6" />;
+    case "speed_demon": return <Zap className="w-6 h-6" />;
+    case "perfect_round": return <Award className="w-6 h-6" />;
+    case "math_king": return <Crown className="w-6 h-6" />;
+    default: return null;
+  }
+};
+
 export const StudentProfile = () => {
   const [stats, setStats] = useState<StudentStats>(() => {
-    // Load from localStorage or use initial data
-    if (typeof window !== 'undefined') {
-      const savedStats = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (savedStats) {
-        const parsedStats = JSON.parse(savedStats);
-        // Ensure icons are re-rendered as ReactNodes
-        return {
-          ...parsedStats,
-          achievements: parsedStats.achievements.map((ach: any) => ({
-            ...ach,
-            icon: ach.id === "first_correct" ? <Star className="w-6 h-6" /> :
-                  ach.id === "streak_master" ? <TrendingUp className="w-6 h-6" /> :
-                  ach.id === "math_master" ? <Trophy className="w-6 h-6" /> :
-                  ach.id === "speed_demon" ? <Zap className="w-6 h-6" /> :
-                  ach.id === "perfect_round" ? <Award className="w-6 h-6" /> :
-                  ach.id === "math_king" ? <Crown className="w-6 h-6" /> : null
-          }))
-        };
-      }
-    }
     // Initial data if nothing in localStorage
-    return {
+    const initialStats: StudentStats = {
       name: "Ali",
       level: 1,
       experience: 0,
@@ -58,56 +53,44 @@ export const StudentProfile = () => {
       joinDate: new Date().toLocaleDateString('tr-TR'),
       favoriteTopic: "Henüz Yok",
       achievements: [
-        {
-          id: "first_correct",
-          name: "İlk Adım",
-          description: "İlk doğru cevabı ver",
-          unlocked: false,
-          icon: <Star className="w-6 h-6" />
-        },
-        {
-          id: "streak_3_days",
-          name: "Seri Başlangıcı",
-          description: "3 gün üst üste oyna",
-          unlocked: false,
-          icon: <TrendingUp className="w-6 h-6" />
-        },
-        {
-          id: "math_master",
-          name: "Matematik Ustası",
-          description: "100 doğru cevap ver",
-          unlocked: false,
-          icon: <Trophy className="w-6 h-6" />
-        },
-        {
-          id: "speed_demon",
-          name: "Hız Canavarı",
-          description: "10 saniyeden kısa sürede 5 cevap ver",
-          unlocked: false,
-          icon: <Zap className="w-6 h-6" />
-        },
-        {
-          id: "perfect_round",
-          name: "Mükemmel Tur",
-          description: "10 soruda 10 doğru cevap",
-          unlocked: false,
-          icon: <Award className="w-6 h-6" />
-        },
-        {
-          id: "math_king",
-          name: "Matematik Kralı",
-          description: "500 doğru cevap ver",
-          unlocked: false,
-          icon: <Crown className="w-6 h-6" />
-        }
+        { id: "first_correct", name: "İlk Adım", description: "İlk doğru cevabı ver", unlocked: false },
+        { id: "streak_3_days", name: "Seri Başlangıcı", description: "3 gün üst üste oyna", unlocked: false },
+        { id: "math_master", name: "Matematik Ustası", description: "100 doğru cevap ver", unlocked: false },
+        { id: "speed_demon", name: "Hız Canavarı", description: "10 saniyeden kısa sürede 5 cevap ver", unlocked: false },
+        { id: "perfect_round", name: "Mükemmel Tur", description: "10 soruda 10 doğru cevap", unlocked: false },
+        { id: "math_king", name: "Matematik Kralı", description: "500 doğru cevap ver", unlocked: false }
       ]
     };
+
+    // Load from localStorage and re-attach icons
+    if (typeof window !== 'undefined') {
+      const savedStats = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (savedStats) {
+        const parsedStats: StudentStats = JSON.parse(savedStats);
+        return {
+          ...parsedStats,
+          achievements: parsedStats.achievements.map(ach => ({
+            ...ach,
+            icon: getAchievementIcon(ach.id) // Re-attach ReactNode icons
+          }))
+        };
+      }
+    }
+    return initialStats;
   });
 
   // Save stats to localStorage whenever they change
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(stats));
+      // Create a serializable version of stats by removing ReactNodes
+      const serializableStats = {
+        ...stats,
+        achievements: stats.achievements.map(ach => {
+          const { icon, ...rest } = ach; // Destructure to omit icon
+          return rest;
+        })
+      };
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(serializableStats));
     }
   }, [stats]);
 
@@ -134,20 +117,20 @@ export const StudentProfile = () => {
         if (!ach.unlocked) {
           if (ach.id === "first_correct" && updatedStats.correctAnswers >= 1) {
             showSuccess(`Başarı: ${ach.name} açıldı!`);
-            return { ...ach, unlocked: true };
+            return { ...ach, unlocked: true, icon: getAchievementIcon(ach.id) };
           }
           if (ach.id === "math_master" && updatedStats.correctAnswers >= 100) {
             showSuccess(`Başarı: ${ach.name} açıldı!`);
-            return { ...ach, unlocked: true };
+            return { ...ach, unlocked: true, icon: getAchievementIcon(ach.id) };
           }
           if (ach.id === "math_king" && updatedStats.correctAnswers >= 500) {
             showSuccess(`Başarı: ${ach.name} açıldı!`);
-            return { ...ach, unlocked: true };
+            return { ...ach, unlocked: true, icon: getAchievementIcon(ach.id) };
           }
           // Add logic for other achievements like streak, speed_demon, perfect_round
           // These might require more complex tracking in game pages or a global state
         }
-        return ach;
+        return { ...ach, icon: getAchievementIcon(ach.id) }; // Ensure icon is always present for rendering
       });
 
       return updatedStats;
