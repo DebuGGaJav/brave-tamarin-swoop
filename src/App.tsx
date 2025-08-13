@@ -14,6 +14,7 @@ import ProblemCozmePage from "./pages/problem-cozme";
 import TeacherDashboard from "@/components/TeacherDashboard";
 import MultiplayerGame from "@/components/MultiplayerGame";
 import AchievementSystem from "@/components/AchievementSystem";
+import ProfilePage from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/teacher" element={<TeacherDashboard />} />
           <Route path="/multiplayer" element={<MultiplayerGame />} />
           <Route path="/achievements" element={<AchievementSystem />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

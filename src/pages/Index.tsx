@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy, Sparkles, Users, Award, UserCheck } from "lucide-react";
+import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy, Sparkles, Users, Award, UserCheck, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { showSuccess } from "@/utils/toast";
 import { MathCharacter } from "@/components/MathCharacter";
@@ -69,13 +69,22 @@ const Index = () => {
 
   const specialFeatures = [
     {
+      title: "Profilim",
+      icon: <User className="w-8 h-8" />,
+      description: "İlerlemeni gör",
+      path: "/profile",
+      color: "bg-gradient-to-r from-indigo-400 to-indigo-500",
+      borderColor: "border-indigo-400",
+      hoverColor: "hover:from-indigo-500 hover:to-indigo-600"
+    },
+    {
       title: "Çok Oyunculu",
       icon: <Users className="w-8 h-8" />,
       description: "Arkadaşlarınla yarış",
       path: "/multiplayer",
-      color: "bg-gradient-to-r from-indigo-400 to-indigo-500",
-      borderColor: "border-indigo-400",
-      hoverColor: "hover:from-indigo-500 hover:to-indigo-600"
+      color: "bg-gradient-to-r from-purple-400 to-purple-500",
+      borderColor: "border-purple-400",
+      hoverColor: "hover:from-purple-500 hover:to-purple-600"
     },
     {
       title: "Başarılar",
@@ -165,7 +174,7 @@ const Index = () => {
 
         <div className="mb-12">
           <h2 className="text-3xl font-bold text-purple-600 mb-8 text-center">Özel Özellikler</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {specialFeatures.map((feature, index) => (
               <Card 
                 key={index} 
