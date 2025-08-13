@@ -10,6 +10,7 @@ import { useSoundFeedback } from "@/components/SoundFeedback";
 import CandyCrushGame from "@/components/CandyCrushGame";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
+import { showSuccess } from "@/utils/toast";
 
 type Operation = "toplama" | "cikarma" | "carpma" | "bolme";
 
@@ -32,6 +33,7 @@ const MixedOperationsPage = () => {
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
   const [sessionPoints, setSessionPoints] = useState(0); // Session-specific
   const [showMiniGame, setShowMiniGame] = useState(false);
+  const [consecutiveCorrect, setConsecutiveCorrect] = useState(0); // Track consecutive correct answers
 
   const generateQuestion = () => {
     let maxNum = 0;
@@ -97,9 +99,11 @@ const MixedOperationsPage = () => {
       setSessionPoints(prev => prev + 10);
       setCharacterMood("happy");
       playSuccessSound();
+      setConsecutiveCorrect(prev => prev + 1); // Increment consecutive correct
     } else {
       setCharacterMood("sad");
       playErrorSound();
+      setConsecutiveCorrect(0); // Reset consecutive correct on wrong answer
     }
   };
 
@@ -109,8 +113,8 @@ const MixedOperationsPage = () => {
     }
     generateQuestion();
     setCharacterMood("neutral");
-    setSessionCorrectAnswers(0); // Reset for next session
-    setSessionTotalQuestions(0); // Reset for next session
+    setSessionCorrectAnswers(0); // Reset for new session
+    setSessionTotalQuestions(0); // Reset for new session
     // setSessionPoints(0); // DO NOT RESET sessionPoints here, let them accumulate
 
     if (sessionPoints >= 50 && !showMiniGame) {

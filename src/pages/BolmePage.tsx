@@ -10,6 +10,7 @@ import { useSoundFeedback } from "@/components/SoundFeedback";
 import CandyCrushGame from "@/components/CandyCrushGame";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
+import { showSuccess } from "@/utils/toast";
 
 const BolmePage = () => {
   const [num1, setNum1] = useState(0);
@@ -23,6 +24,7 @@ const BolmePage = () => {
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
   const [sessionPoints, setSessionPoints] = useState(0); // Session-specific
   const [showMiniGame, setShowMiniGame] = useState(false);
+  const [consecutiveCorrect, setConsecutiveCorrect] = useState(0); // Track consecutive correct answers
 
   const generateNumbers = () => {
     let max = difficulty === "easy" ? 10 : difficulty === "medium" ? 20 : 30;
@@ -48,10 +50,11 @@ const BolmePage = () => {
       setSessionPoints(prev => prev + 10);
       setCharacterMood("happy");
       playSuccessSound();
+      setConsecutiveCorrect(prev => prev + 1); // Increment consecutive correct
     } else {
       setCharacterMood("sad");
-
       playErrorSound();
+      setConsecutiveCorrect(0); // Reset consecutive correct on wrong answer
     }
   };
 
@@ -61,8 +64,8 @@ const BolmePage = () => {
     }
     generateNumbers();
     setCharacterMood("neutral");
-    setSessionCorrectAnswers(0); // Reset for next session
-    setSessionTotalQuestions(0); // Reset for next session
+    setSessionCorrectAnswers(0); // Reset for new session
+    setSessionTotalQuestions(0); // Reset for new session
     // setSessionPoints(0); // DO NOT RESET sessionPoints here, let them accumulate
 
     if (sessionPoints >= 50 && !showMiniGame) {
@@ -73,6 +76,21 @@ const BolmePage = () => {
   useEffect(() => {
     generateNumbers();
   }, [difficulty]); // Regenerate on difficulty change
+
+  // Automatic difficulty level-up logic
+  useEffect(() => {
+    if (consecutiveCorrect >= 5) { // Example: 5 consecutive correct answers to level up
+      if (difficulty === "easy") {
+        setDifficulty("medium");
+        showSuccess("Tebrikler! Zorluk seviyesi 'Orta'ya yükseltildi! 🎉");
+        setConsecutiveCorrect(0); // Reset for new difficulty
+      } else if (difficulty === "medium") {
+        setDifficulty("hard");
+        showSuccess("Harika! Zorluk seviyesi 'Zor'a yükseltildi! 🚀");
+        setConsecutiveCorrect(0); // Reset for new difficulty
+      }
+    }
+  }, [consecutiveCorrect, difficulty]);
 
   const handleMiniGameEnd = (gameScore: number) => {
     if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
