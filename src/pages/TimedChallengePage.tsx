@@ -29,7 +29,8 @@ const TimedChallengePage = () => {
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isCorrect, setIsCorrect] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null); // Geri bildirim mesajı için yeni state
+  const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean | null>(null); // Cevabın doğru olup olmadığını tutar
   const [sessionPoints, setSessionPoints] = useState(0); // Session-specific
 
   const generateQuestion = () => {
@@ -67,7 +68,8 @@ const TimedChallengePage = () => {
     setCurrentQuestion({ num1, num2, operation: randomOperation, answer });
     setUserAnswer("");
     setCharacterMood("neutral");
-    setIsCorrect(false);
+    setFeedbackMessage(null); // Yeni soru geldiğinde geri bildirim mesajını sıfırla
+    setIsCorrectAnswer(null); // Yeni soru geldiğinde doğru/yanlış bilgisini sıfırla
     inputRef.current?.focus();
   };
 
@@ -93,25 +95,6 @@ const TimedChallengePage = () => {
     }
   }, [gameStarted]);
 
-  // Anlık cevap kontrolü için yeni useEffect
-  useEffect(() => {
-    if (userAnswer === "") {
-      setIsCorrect(false); // Cevap boşsa geri bildirimi sıfırla
-      setCharacterMood("neutral");
-      return;
-    }
-    if (currentQuestion && userAnswer !== "") {
-      const correct = parseInt(userAnswer) === currentQuestion.answer;
-      setIsCorrect(correct);
-      if (correct) {
-        setCharacterMood("happy");
-      } else {
-        setCharacterMood("sad");
-      }
-    }
-  }, [userAnswer, currentQuestion]);
-
-
   const startGame = () => {
     setGameStarted(true);
     setGameEnded(false);
@@ -123,22 +106,28 @@ const TimedChallengePage = () => {
   };
 
   const handleCheckAnswer = () => {
-    if (!currentQuestion) return;
+    if (!currentQuestion || userAnswer === "") return; // Cevap boşsa kontrol etme
+
     setSessionTotalQuestions((prev) => prev + 1);
     const correct = parseInt(userAnswer) === currentQuestion.answer;
-    setIsCorrect(correct);
+    setIsCorrectAnswer(correct); // Doğru/yanlış bilgisini kaydet
 
     if (correct) {
       setSessionCorrectAnswers((prev) => prev + 1);
       setSessionPoints((prev) => prev + 10);
+      setCharacterMood("happy");
       playSuccessSound();
+      setFeedbackMessage('🎉 Doğru cevap! 🎉');
     } else {
+      setCharacterMood("sad");
       playErrorSound();
+      setFeedbackMessage(`❌ Yanlış! Doğru cevap: ${currentQuestion.answer} ❌`);
     }
-    // Cevap kontrol edildikten sonra yeni soruya geç
+    
+    // Geri bildirim gösterildikten sonra kısa bir gecikmeyle yeni soruya geç
     setTimeout(() => {
       generateQuestion();
-    }, 500);
+    }, 1000); // 1 saniye gecikme
   };
 
   const getOperationSymbol = (operation: Operation) => {
@@ -241,16 +230,16 @@ const TimedChallengePage = () => {
                 <MathCharacter mood={characterMood} />
 
                 <AnimatePresence>
-                  {userAnswer !== "" && (
+                  {feedbackMessage && ( // feedbackMessage varsa göster
                     <motion.div
                       key={sessionTotalQuestions}
                       initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 20 }}
                       transition={{ duration: 0.3 }}
-                      className={`text-center text-lg sm:text-xl font-bold mb-4 p-3 sm:p-4 rounded-lg ${isCorrect ? 'bg-green-100 text-green-600 border-2 border-green-300' : 'bg-red-100 text-red-600 border-2 border-red-300'}`}
+                      className={`text-center text-lg sm:text-xl font-bold mb-4 p-3 sm:p-4 rounded-lg ${isCorrectAnswer ? 'bg-green-100 text-green-600 border-2 border-green-300' : 'bg-red-100 text-red-600 border-2 border-red-300'}`}
                     >
-                      {isCorrect ? '🎉 Doğru cevap! 🎉' : `❌ Yanlış! Doğru cevap: ${currentQuestion.answer} ❌`}
+                      {feedbackMessage}
                     </motion.div>
                   )}
                 </AnimatePresence>
