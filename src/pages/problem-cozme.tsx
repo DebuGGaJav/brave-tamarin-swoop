@@ -7,7 +7,6 @@ import { MathCharacter } from "@/components/MathCharacter";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
-import { NumberInput } from "@/components/ui/number-input";
 import CandyCrushGame from "@/components/CandyCrushGame"; // Import the new game component
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -124,11 +123,12 @@ const ProblemCozmePage = () => {
               </div>
               
               <div className="mb-6">
-                <NumberInput
+                <input
+                  type="number"
                   value={userAnswer}
                   onChange={(e) => setUserAnswer(e.target.value)} // Corrected onChange handler
+                  className="w-32 h-16 text-2xl text-center border-2 border-purple-300 rounded-lg"
                   placeholder="?"
-                  size="lg"
                 />
               </div>
 

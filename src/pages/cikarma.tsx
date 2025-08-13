@@ -7,7 +7,6 @@ import { MathCharacter } from "@/components/MathCharacter";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
-import { NumberInput } from "@/components/ui/number-input";
 import CandyCrushGame from "@/components/CandyCrushGame"; // Import the new game component
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -97,11 +96,12 @@ const CikarmaPage = () => {
                   <div className="text-5xl font-bold text-red-600">{num2}</div>
                 </div>
                 <div className="text-5xl font-bold text-gray-400">=</div>
-                <NumberInput
+                <input
+                  type="number"
                   value={userAnswer}
-                  onChange={(e) => setUserAnswer(e.target.value)} // Corrected onChange handler
+                  onChange={(e) => setUserAnswer(e.target.value)}
+                  className="w-32 h-16 text-2xl text-center border-2 border-purple-300 rounded-lg"
                   placeholder="?"
-                  size="lg"
                 />
               </div>
 
