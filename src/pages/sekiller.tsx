@@ -152,36 +152,36 @@ const SekillerPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 p-4">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-purple-600 mb-2">Şekiller</h1>
-          <p className="text-xl text-gray-600">Geometrik şekilleri öğrenelim!</p>
+        <div className="text-center mb-8 sm:mb-10">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-purple-600 mb-2">Şekiller</h1>
+          <p className="text-lg sm:text-xl text-gray-600">Geometrik şekilleri öğrenelim!</p>
         </div>
 
         <ScoreBoard correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
         <DifficultySelector onSelect={setDifficulty} currentLevel={difficulty} />
 
-        <Card className="mb-4">
+        <Card className="mb-4 shadow-xl border-2 border-purple-200">
           <CardHeader>
-            <CardTitle className="text-center text-purple-600">Şekil Tanıma</CardTitle>
+            <CardTitle className="text-center text-purple-600 text-xl sm:text-2xl">Şekil Tanıma</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
               {getShapeImage(currentQuestion.shape) ? (
-                <img src={getShapeImage(currentQuestion.shape)} alt={currentQuestion.shape} className="mx-auto mb-4 w-32 h-32 object-contain" />
+                <img src={getShapeImage(currentQuestion.shape)} alt={currentQuestion.shape} className="mx-auto mb-4 w-24 h-24 sm:w-32 sm:h-32 object-contain" />
               ) : (
-                <div className="text-8xl mb-6">{currentQuestion.emoji}</div>
+                <div className="text-7xl sm:text-8xl mb-6">{currentQuestion.emoji}</div>
               )}
               
               <div className="mb-4">
-                <p className="text-lg text-gray-700 mb-4">Bu şekil hangisidir?</p>
-                <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto">
+                <p className="text-lg sm:text-xl text-gray-700 mb-4">Bu şekil hangisidir?</p>
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 max-w-xs sm:max-w-md mx-auto">
                   {currentQuestion.options.map((option) => (
                     <Button
                       key={option}
                       onClick={() => setUserAnswer(option)}
-                      className={`p-4 h-auto text-lg font-medium transition-all duration-200 ${
+                      className={`p-3 sm:p-4 h-auto text-base sm:text-lg font-medium transition-all duration-200 ${
                         userAnswer === option
                           ? "bg-purple-600 text-white shadow-lg transform scale-105"
                           : "bg-gray-100 hover:bg-gray-200 hover:shadow-md"
@@ -197,7 +197,7 @@ const SekillerPage = () => {
               <MathCharacter mood={characterMood} />
 
               {showResult && (
-                <div className={`text-center text-xl font-bold mb-4 p-4 rounded-lg ${
+                <div className={`text-center text-lg sm:text-xl font-bold mb-4 p-3 sm:p-4 rounded-lg ${
                   isCorrect 
                     ? 'bg-green-100 text-green-600 border-2 border-green-300' 
                     : 'bg-red-100 text-red-600 border-2 border-red-300'
@@ -210,7 +210,7 @@ const SekillerPage = () => {
                 {!showResult ? (
                   <Button
                     onClick={checkAnswer}
-                    className="bg-purple-600 hover:bg-purple-700 px-8 py-3 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="bg-purple-600 hover:bg-purple-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
                     disabled={!userAnswer}
                   >
                     Kontrol Et
@@ -218,7 +218,7 @@ const SekillerPage = () => {
                 ) : (
                   <Button
                     onClick={nextQuestion}
-                    className="bg-green-600 hover:bg-green-700 px-8 py-3 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="bg-green-600 hover:bg-green-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     Sonraki Soru
                   </Button>
@@ -231,15 +231,15 @@ const SekillerPage = () => {
         <ProgressTracker topic="Şekiller" correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
 
         <div className="mt-8 text-center">
-          <h2 className="text-2xl font-bold text-purple-600">Toplam Puan: {totalPoints}</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-purple-600">Toplam Puan: {totalPoints}</h2>
           {totalPoints >= 50 && (
             <Dialog open={showMiniGame} onOpenChange={setShowMiniGame}>
               <DialogTrigger asChild>
-                <Button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold">
+                <Button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg">
                   Mini Oyunu Oyna!
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl p-0 border-none">
+              <DialogContent className="max-w-sm sm:max-w-2xl p-0 border-none">
                 <CandyCrushGame onGameEnd={handleMiniGameEnd} onClose={() => setShowMiniGame(false)} />
               </DialogContent>
             </Dialog>
