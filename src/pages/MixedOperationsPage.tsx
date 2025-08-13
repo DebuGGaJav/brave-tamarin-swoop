@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus, X, Divide, Brain } from "lucide-react";
 import ProgressTracker from "@/components/ProgressTracker";
-import { MathCharacter } from "@/components/MathCharacter"; // Hata düzeltildi
+import { MathCharacter } from "@/components/MathCharacter";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
@@ -121,6 +121,21 @@ const MixedOperationsPage = () => {
       setShowMiniGame(true);
     }
   };
+
+  // Automatic difficulty level-up logic
+  useEffect(() => {
+    if (consecutiveCorrect >= 5) { // Example: 5 consecutive correct answers to level up
+      if (difficulty === "easy") {
+        setDifficulty("medium");
+        showSuccess("Tebrikler! Zorluk seviyesi 'Orta'ya yükseltildi! 🎉");
+        setConsecutiveCorrect(0); // Reset for new difficulty
+      } else if (difficulty === "medium") {
+        setDifficulty("hard");
+        showSuccess("Harika! Zorluk seviyesi 'Zor'a yükseltildi! 🚀");
+        setConsecutiveCorrect(0); // Reset for new difficulty
+      }
+    }
+  }, [consecutiveCorrect, difficulty]);
 
   const handleMiniGameEnd = (gameScore: number) => {
     if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
