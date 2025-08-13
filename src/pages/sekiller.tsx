@@ -172,6 +172,10 @@ const SekillerPage = () => {
     }
   };
 
+  if (!currentQuestion) {
+    return <div>Yükleniyor...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto">
