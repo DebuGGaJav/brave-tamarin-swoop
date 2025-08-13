@@ -14,7 +14,8 @@ import { showSuccess } from "@/utils/toast";
 
 interface ShapeQuestion {
   shape: string;
-  emoji: string;
+  emoji?: string; // Emoji artık opsiyonel
+  image?: string; // Yeni görsel alanı
   options: string[];
   correctAnswer: string;
 }
@@ -36,18 +37,21 @@ const SekillerPage = () => {
     {
       shape: "kare",
       emoji: "⬜",
+      image: "/images/square.png",
       options: ["kare", "daire", "üçgen", "dikdörtgen"],
       correctAnswer: "kare"
     },
     {
       shape: "daire",
       emoji: "⭕",
+      image: "/images/circle.png",
       options: ["daire", "kare", "üçgen", "yamuk"],
       correctAnswer: "daire"
     },
     {
       shape: "üçgen",
       emoji: "🔺",
+      image: "/images/triangle.png",
       options: ["üçgen", "kare", "daire", "dikdörtgen"],
       correctAnswer: "üçgen"
     },
@@ -59,7 +63,7 @@ const SekillerPage = () => {
     },
     {
       shape: "yamuk",
-      emoji: "🔷",
+      // emoji: "🔷", // Yamuk için uygun emoji yok, kaldırıldı
       options: ["yamuk", "kare", "üçgen", "daire"],
       correctAnswer: "yamuk"
     },
@@ -163,13 +167,15 @@ const SekillerPage = () => {
     setShowMiniGame(false);
   };
 
-  const getShapeImage = (shape: string) => {
-    switch (shape) {
-      case "kare": return "/images/square.png";
-      case "daire": return "/images/circle.png";
-      case "üçgen": return "/images/triangle.png";
-      default: return "";
+  // getShapeImage fonksiyonu artık currentQuestion.image'i kullanacak
+  // Eğer currentQuestion.image varsa onu kullan, yoksa eski mantıkla devam et
+  const renderShapeVisual = () => {
+    if (currentQuestion?.image) {
+      return <img src={currentQuestion.image} alt={currentQuestion.shape} className="mx-auto mb-4 w-24 h-24 sm:w-32 sm:h-32 object-contain" />;
+    } else if (currentQuestion?.emoji) {
+      return <div className="text-7xl sm:text-8xl mb-6">{currentQuestion.emoji}</div>;
     }
+    return null; // Ne görsel ne de emoji varsa hiçbir şey gösterme
   };
 
   if (!currentQuestion) {
@@ -193,11 +199,7 @@ const SekillerPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
-              {getShapeImage(currentQuestion.shape) ? (
-                <img src={getShapeImage(currentQuestion.shape)} alt={currentQuestion.shape} className="mx-auto mb-4 w-24 h-24 sm:w-32 sm:h-32 object-contain" />
-              ) : (
-                <div className="text-7xl sm:text-8xl mb-6">{currentQuestion.emoji}</div>
-              )}
+              {renderShapeVisual()}
               
               <div className="mb-4">
                 <p className="text-lg sm:text-xl text-gray-700 mb-4">Bu şekil hangisidir?</p>

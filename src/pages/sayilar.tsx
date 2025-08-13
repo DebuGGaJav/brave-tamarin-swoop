@@ -90,11 +90,13 @@ const SayilarPage = () => {
     return (
       <div className="flex justify-center flex-wrap gap-2 sm:gap-3 mb-6 max-w-md mx-auto">
         <img src="/images/counting_fingers.png" alt="Counting Fingers" className="mx-auto mb-4 w-24 h-24 sm:w-32 sm:h-32 object-contain" />
-        {Array.from({ length: currentNumber }, (_, i) => (
-          <div key={i} className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-md">
-            {i + 1}
-          </div>
-        ))}
+        <div className="flex justify-center flex-wrap gap-2 sm:gap-3"> {/* Yeni div */}
+          {Array.from({ length: currentNumber }, (_, i) => (
+            <div key={i} className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-md">
+              {/* Sayı kaldırıldı */}
+            </div>
+          ))}
+        </div>
       </div>
     );
   };
