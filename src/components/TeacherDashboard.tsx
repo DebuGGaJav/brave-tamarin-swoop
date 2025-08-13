@@ -52,97 +52,97 @@ export default function TeacherDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-4">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-purple-600 mb-2">Öğretmen Paneli</h1>
-          <p className="text-xl text-gray-600">Öğrenci İlerleme Takibi</p>
+        <div className="text-center mb-8 sm:mb-10">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-purple-600 mb-2">Öğretmen Paneli</h1>
+          <p className="text-lg sm:text-xl text-gray-600">Öğrenci İlerleme Takibi</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Toplam Öğrenci</CardTitle>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+          <Card className="shadow-lg">
+            <CardHeader className="pb-2 sm:pb-3">
+              <CardTitle className="text-sm sm:text-base font-medium">Toplam Öğrenci</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold flex items-center">
-                <Users className="w-5 h-5 mr-2" />
+              <div className="text-2xl sm:text-3xl font-bold flex items-center">
+                <Users className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
                 {students.length}
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Ortalama Başarı</CardTitle>
+          <Card className="shadow-lg">
+            <CardHeader className="pb-2 sm:pb-3">
+              <CardTitle className="text-sm sm:text-base font-medium">Ortalama Başarı</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold flex items-center">
-                <Trophy className="w-5 h-5 mr-2" />
+              <div className="text-2xl sm:text-3xl font-bold flex items-center">
+                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
                 {Math.round(students.reduce((acc, s) => acc + getOverallProgress(s), 0) / students.length)}%
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Toplam Soru</CardTitle>
+          <Card className="shadow-lg">
+            <CardHeader className="pb-2 sm:pb-3">
+              <CardTitle className="text-sm sm:text-base font-medium">Toplam Soru</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold flex items-center">
-                <BookOpen className="w-5 h-5 mr-2" />
+              <div className="text-2xl sm:text-3xl font-bold flex items-center">
+                <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
                 {students.reduce((acc, s) => acc + s.totalQuestions, 0)}
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Aktif Konu</CardTitle>
+          <Card className="shadow-lg">
+            <CardHeader className="pb-2 sm:pb-3">
+              <CardTitle className="text-sm sm:text-base font-medium">Aktif Konu</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold flex items-center">
-                <Target className="w-5 h-5 mr-2" />
+              <div className="text-2xl sm:text-3xl font-bold flex items-center">
+                <Target className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
                 Toplama
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid gap-6">
+        <div className="grid gap-4 sm:gap-6">
           {students.map((student, index) => {
             const progress = getOverallProgress(student);
             const level = getLevel(progress);
             
             return (
-              <Card key={index}>
+              <Card key={index} className="shadow-xl border-2 border-purple-200">
                 <CardHeader>
-                  <CardTitle className="text-lg">{student.name}</CardTitle>
+                  <CardTitle className="text-lg sm:text-xl">{student.name}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
+                  <div className="space-y-4 sm:space-y-5">
                     <div>
-                      <div className="flex justify-between text-sm mb-2">
+                      <div className="flex justify-between text-sm sm:text-base mb-2">
                         <span>Genel Başarı</span>
                         <span className={level.color}>{level.name}</span>
                       </div>
-                      <Progress value={progress} className="h-2" />
+                      <Progress value={progress} className="h-2 sm:h-3" />
                     </div>
                     
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 text-sm sm:text-base">
                       {Object.entries(student.topics).map(([topic, score]) => (
                         <div key={topic} className="space-y-1">
                           <div className="font-medium capitalize">{topic}</div>
-                          <Progress value={score} className="h-1" />
-                          <div className="text-xs text-gray-500">{score}%</div>
+                          <Progress value={score} className="h-1 sm:h-2" />
+                          <div className="text-xs sm:text-sm text-gray-500">{score}%</div>
                         </div>
                       ))}
                     </div>
                     
-                    <div className="flex justify-between items-center pt-4 border-t">
-                      <span className="text-sm">Toplam: {student.totalQuestions} soru</span>
-                      <span className="text-sm">Doğru: {student.correctAnswers}</span>
-                      <span className={`font-bold ${level.color}`}>{progress}%</span>
+                    <div className="flex justify-between items-center pt-4 sm:pt-5 border-t border-gray-200">
+                      <span className="text-sm sm:text-base">Toplam: {student.totalQuestions} soru</span>
+                      <span className="text-sm sm:text-base">Doğru: {student.correctAnswers}</span>
+                      <span className={`font-bold text-base sm:text-lg ${level.color}`}>{progress}%</span>
                     </div>
                   </div>
                 </CardContent>
