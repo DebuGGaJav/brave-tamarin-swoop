@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy, Sparkles, Users, Award, UserCheck, User, X } from "lucide-react";
+import { Plus, Minus, Shapes, Hash, Equal, Brain, Trophy, Sparkles, Users, Award, UserCheck, User, X, Divide } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { showSuccess } from "@/utils/toast";
 import { MathCharacter } from "@/components/MathCharacter";
@@ -37,6 +37,15 @@ const Index = () => {
       color: "bg-gradient-to-r from-orange-400 to-orange-500",
       borderColor: "border-orange-400",
       hoverColor: "hover:from-orange-500 hover:to-orange-600"
+    },
+    {
+      title: "Bölme",
+      icon: <Divide className="w-8 h-8" />,
+      description: "Eğlenceli bölme işlemleri",
+      path: "/bolme",
+      color: "bg-gradient-to-r from-indigo-400 to-indigo-500",
+      borderColor: "border-indigo-400",
+      hoverColor: "hover:from-indigo-500 hover:to-indigo-600"
     },
     {
       title: "Sayılar",
