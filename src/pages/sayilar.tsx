@@ -7,8 +7,6 @@ import { MathCharacter } from "@/components/MathCharacter";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
-import CandyCrushGame from "@/components/CandyCrushGame"; // Import the new game component
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const SayilarPage = () => {
   const [currentNumber, setCurrentNumber] = useState(0);
@@ -21,8 +19,6 @@ const SayilarPage = () => {
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
   const [gameMode, setGameMode] = useState<"count" | "identify">("count");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
-  const [totalPoints, setTotalPoints] = useState(0);
-  const [showMiniGame, setShowMiniGame] = useState(false);
 
   const generateNumber = () => {
     let max = difficulty === "easy" ? 5 : difficulty === "medium" ? 10 : 20;
@@ -40,7 +36,6 @@ const SayilarPage = () => {
     
     if (correct) {
       setCorrectAnswers(correctAnswers + 1);
-      setTotalPoints(prev => prev + 10); // Award points for correct answer
       setCharacterMood("happy");
       playSuccessSound();
     } else {
@@ -52,10 +47,6 @@ const SayilarPage = () => {
   const nextQuestion = () => {
     generateNumber();
     setCharacterMood("neutral");
-    // Check if mini-game should be unlocked
-    if (totalPoints >= 50 && !showMiniGame) { // Example: unlock at 50 points
-      setShowMiniGame(true);
-    }
   };
 
   useState(() => {
@@ -73,11 +64,6 @@ const SayilarPage = () => {
         ))}
       </div>
     );
-  };
-
-  const handleMiniGameEnd = (gameScore: number) => {
-    setTotalPoints(prev => prev + gameScore); // Add mini-game score to total points
-    setShowMiniGame(false);
   };
 
   return (
@@ -146,22 +132,6 @@ const SayilarPage = () => {
         </Card>
 
         <ProgressTracker topic="Sayılar" correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
-
-        <div className="mt-8 text-center">
-          <h2 className="text-2xl font-bold text-blue-600">Toplam Puan: {totalPoints}</h2>
-          {totalPoints >= 50 && (
-            <Dialog open={showMiniGame} onOpenChange={setShowMiniGame}>
-              <DialogTrigger asChild>
-                <Button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold">
-                  Mini Oyunu Oyna!
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl p-0 border-none">
-                <CandyCrushGame onGameEnd={handleMiniGameEnd} onClose={() => setShowMiniGame(false)} />
-              </DialogContent>
-            </Dialog>
-          )}
-        </div>
       </div>
     </div>
   );

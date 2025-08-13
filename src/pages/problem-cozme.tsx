@@ -126,7 +126,7 @@ const ProblemCozmePage = () => {
               <div className="mb-6">
                 <NumberInput
                   value={userAnswer}
-                  onChange={setUserAnswer}
+                  onChange={(e) => setUserAnswer(e.target.value)} // Corrected onChange handler
                   placeholder="?"
                   size="lg"
                 />

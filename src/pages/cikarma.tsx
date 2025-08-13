@@ -99,7 +99,7 @@ const CikarmaPage = () => {
                 <div className="text-5xl font-bold text-gray-400">=</div>
                 <NumberInput
                   value={userAnswer}
-                  onChange={setUserAnswer}
+                  onChange={(e) => setUserAnswer(e.target.value)} // Corrected onChange handler
                   placeholder="?"
                   size="lg"
                 />

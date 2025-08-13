@@ -1,98 +1,33 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Plus, Minus } from "lucide-react";
+import * as React from "react";
 import { cn } from "@/lib/utils";
 
-interface NumberInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  className?: string;
+export interface NumberInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> { // Omit 'size' from original HTML attributes
   size?: "sm" | "md" | "lg";
-  disabled?: boolean;
 }
 
-export const NumberInput: React.FC<NumberInputProps> = ({
-  value,
-  onChange,
-  placeholder = "?",
-  className,
-  size = "lg",
-  disabled = false
-}) => {
-  const increment = () => {
-    const currentValue = parseInt(value) || 0;
-    onChange((currentValue + 1).toString());
-  };
+const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
+  ({ className, type, size = "md", ...props }, ref) => {
+    const sizeClasses = {
+      sm: "h-10 px-3 py-2 text-base",
+      md: "h-12 px-4 py-2 text-xl",
+      lg: "h-16 px-5 py-3 text-2xl",
+    };
 
-  const decrement = () => {
-    const currentValue = parseInt(value) || 0;
-    if (currentValue > 0) {
-      onChange((currentValue - 1).toString());
-    }
-  };
+    return (
+      <input
+        type="number"
+        className={cn(
+          "flex w-32 rounded-md border border-input bg-background ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-center font-bold",
+          sizeClasses[size],
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+NumberInput.displayName = "NumberInput";
 
-  const sizeClasses = {
-    sm: "w-20 h-12 text-lg",
-    md: "w-28 h-14 text-xl", 
-    lg: "w-32 h-16 text-2xl"
-  };
-
-  const buttonSizeClasses = {
-    sm: "w-8 h-8",
-    md: "w-10 h-10",
-    lg: "w-12 h-12"
-  };
-
-  return (
-    <Card className={cn("inline-block shadow-lg border-2 transition-all duration-200 hover:shadow-xl", className)}>
-      <div className="flex items-center">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={decrement}
-          disabled={disabled || (!value && parseInt(value) <= 0)}
-          className={cn(
-            "rounded-l-lg rounded-r-none border-r hover:bg-gray-100 transition-colors",
-            buttonSizeClasses[size]
-          )}
-        >
-          <Minus className={cn(
-            size === "sm" ? "w-4 h-4" : 
-            size === "md" ? "w-5 h-5" : "w-6 h-6"
-          )} />
-        </Button>
-        
-        <Input
-          type="number"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          disabled={disabled}
-          className={cn(
-            "border-0 text-center font-bold focus:ring-0 focus:outline-none",
-            sizeClasses[size]
-          )}
-        />
-        
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={increment}
-          disabled={disabled}
-          className={cn(
-            "rounded-r-lg rounded-l-none border-l hover:bg-gray-100 transition-colors",
-            buttonSizeClasses[size]
-          )}
-        >
-          <Plus className={cn(
-            size === "sm" ? "w-4 h-4" : 
-            size === "md" ? "w-5 h-5" : "w-6 h-6"
-          )} />
-        </Button>
-      </div>
-    </Card>
-  );
-};
+export { NumberInput };
