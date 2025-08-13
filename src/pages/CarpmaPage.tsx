@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X, Star, Trophy } from "lucide-react";
@@ -9,37 +9,37 @@ import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
 import CandyCrushGame from "@/components/CandyCrushGame";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { motion } from "framer-motion"; // framer-motion import edildi
+import { motion } from "framer-motion";
 
 const CarpmaPage = () => {
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
-  const [feedback, setFeedback] = useState<boolean | null>(null); // null: no feedback, true: correct, false: incorrect
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [feedback, setFeedback] = useState<boolean | null>(null);
+  const [sessionCorrectAnswers, setSessionCorrectAnswers] = useState(0); // Session-specific
+  const [sessionTotalQuestions, setSessionTotalQuestions] = useState(0); // Session-specific
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
-  const [totalPoints, setTotalPoints] = useState(0);
+  const [sessionPoints, setSessionPoints] = useState(0); // Session-specific
   const [showMiniGame, setShowMiniGame] = useState(false);
 
   const generateNumbers = () => {
-    let max = difficulty === "easy" ? 5 : difficulty === "medium" ? 10 : 12; // Max for multiplication
+    let max = difficulty === "easy" ? 5 : difficulty === "medium" ? 10 : 12;
     setNum1(Math.floor(Math.random() * max) + 1);
     setNum2(Math.floor(Math.random() * max) + 1);
     setUserAnswer("");
-    setFeedback(null); // Reset feedback
+    setFeedback(null);
   };
 
   const checkAnswer = () => {
     const correct = parseInt(userAnswer) === num1 * num2;
-    setFeedback(correct); // Set feedback
-    setTotalQuestions(totalQuestions + 1);
+    setFeedback(correct);
+    setSessionTotalQuestions(prev => prev + 1);
     
     if (correct) {
-      setCorrectAnswers(correctAnswers + 1);
-      setTotalPoints(prev => prev + 10);
+      setSessionCorrectAnswers(prev => prev + 1);
+      setSessionPoints(prev => prev + 10);
       setCharacterMood("happy");
       playSuccessSound();
     } else {
@@ -49,19 +49,28 @@ const CarpmaPage = () => {
   };
 
   const nextQuestion = () => {
+    if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
+      (window as any).updateStudentStats(sessionCorrectAnswers, sessionTotalQuestions, sessionPoints);
+    }
     generateNumbers();
     setCharacterMood("neutral");
-    if (totalPoints >= 50 && !showMiniGame) {
+    setSessionCorrectAnswers(0); // Reset for next session
+    setSessionTotalQuestions(0); // Reset for next session
+    setSessionPoints(0); // Reset for next session
+
+    if (sessionPoints >= 50 && !showMiniGame) {
       setShowMiniGame(true);
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     generateNumbers();
-  });
+  }, [difficulty]); // Regenerate on difficulty change
 
   const handleMiniGameEnd = (gameScore: number) => {
-    setTotalPoints(prev => prev + gameScore);
+    if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
+      (window as any).updateStudentStats(0, 0, gameScore);
+    }
     setShowMiniGame(false);
   };
 
@@ -73,7 +82,7 @@ const CarpmaPage = () => {
           <p className="text-lg sm:text-xl text-gray-600">Eğlenceli çarpma öğrenelim!</p>
         </div>
 
-        <ScoreBoard correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
+        <ScoreBoard correctAnswers={sessionCorrectAnswers} totalQuestions={sessionTotalQuestions} />
         <DifficultySelector onSelect={setDifficulty} currentLevel={difficulty} />
 
         <Card className="mb-4 shadow-xl border-2 border-orange-200">
@@ -130,11 +139,11 @@ const CarpmaPage = () => {
           </CardContent>
         </Card>
 
-        <ProgressTracker topic="Çarpma" correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
+        <ProgressTracker topic="Çarpma" correctAnswers={sessionCorrectAnswers} totalQuestions={sessionTotalQuestions} />
         
         <div className="mt-8 text-center">
-          <h2 className="text-xl sm:text-2xl font-bold text-orange-600">Toplam Puan: {totalPoints}</h2>
-          {totalPoints >= 50 && (
+          <h2 className="text-xl sm:text-2xl font-bold text-orange-600">Oturum Puanı: {sessionPoints}</h2>
+          {sessionPoints >= 50 && (
             <Dialog open={showMiniGame} onOpenChange={setShowMiniGame}>
               <DialogTrigger asChild>
                 <Button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg">

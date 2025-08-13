@@ -24,15 +24,16 @@ const TimedChallengePage = () => {
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [gameStarted, setGameStarted] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [sessionCorrectAnswers, setSessionCorrectAnswers] = useState(0); // Session-specific
+  const [sessionTotalQuestions, setSessionTotalQuestions] = useState(0); // Session-specific
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isCorrect, setIsCorrect] = useState(false); // isCorrect state'i burada tanımlandı
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [sessionPoints, setSessionPoints] = useState(0); // Session-specific
 
   const generateQuestion = () => {
-    const maxNum = 15; // Numbers up to 15 for mixed operations
+    const maxNum = 15;
     const operations: Operation[] = ["toplama", "cikarma", "carpma", "bolme"];
     const randomOperation = operations[Math.floor(Math.random() * operations.length)];
     let num1, num2, answer;
@@ -66,7 +67,7 @@ const TimedChallengePage = () => {
     setCurrentQuestion({ num1, num2, operation: randomOperation, answer });
     setUserAnswer("");
     setCharacterMood("neutral");
-    setIsCorrect(false); // Yeni soru üretildiğinde isCorrect'i sıfırla
+    setIsCorrect(false);
     inputRef.current?.focus();
   };
 
@@ -80,6 +81,9 @@ const TimedChallengePage = () => {
       setGameEnded(true);
       setGameStarted(false);
       setCharacterMood("excited");
+      if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
+        (window as any).updateStudentStats(sessionCorrectAnswers, sessionTotalQuestions, sessionPoints);
+      }
     }
   }, [gameStarted, timeLeft]);
 
@@ -93,29 +97,30 @@ const TimedChallengePage = () => {
     setGameStarted(true);
     setGameEnded(false);
     setTimeLeft(GAME_DURATION);
-    setCorrectAnswers(0);
-    setTotalQuestions(0);
+    setSessionCorrectAnswers(0);
+    setSessionTotalQuestions(0);
+    setSessionPoints(0);
     generateQuestion();
   };
 
   const checkAnswer = () => {
     if (!currentQuestion) return;
-    setTotalQuestions((prev) => prev + 1);
+    setSessionTotalQuestions((prev) => prev + 1);
     const correct = parseInt(userAnswer) === currentQuestion.answer;
     setIsCorrect(correct);
 
     if (correct) {
-      setCorrectAnswers((prev) => prev + 1);
+      setSessionCorrectAnswers((prev) => prev + 1);
+      setSessionPoints((prev) => prev + 10);
       setCharacterMood("happy");
       playSuccessSound();
     } else {
       setCharacterMood("sad");
       playErrorSound();
     }
-    // Briefly show result then move to next question
     setTimeout(() => {
       generateQuestion();
-    }, 500); // Short delay to show feedback
+    }, 500);
   };
 
   const getOperationSymbol = (operation: Operation) => {
@@ -189,7 +194,7 @@ const TimedChallengePage = () => {
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center space-x-2 text-lg sm:text-xl font-bold text-gray-700">
                   <Trophy className="w-5 h-5 text-yellow-500" />
-                  <span>Doğru: {correctAnswers}</span>
+                  <span>Doğru: {sessionCorrectAnswers}</span>
                 </div>
                 <div className="flex items-center space-x-2 text-lg sm:text-xl font-bold text-red-600">
                   <Clock className="w-5 h-5" />
@@ -218,9 +223,9 @@ const TimedChallengePage = () => {
                 <MathCharacter mood={characterMood} />
 
                 <AnimatePresence>
-                  {userAnswer !== "" && ( // Only show feedback if user has typed something
+                  {userAnswer !== "" && (
                     <motion.div
-                      key={totalQuestions} // Key change to re-trigger animation on new question
+                      key={sessionTotalQuestions}
                       initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 20 }}
@@ -254,10 +259,10 @@ const TimedChallengePage = () => {
             <CardContent className="text-center">
               <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
               <p className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
-                {correctAnswers} / {totalQuestions} Doğru Cevap!
+                {sessionCorrectAnswers} / {sessionTotalQuestions} Doğru Cevap!
               </p>
               <p className="text-lg sm:text-xl text-gray-600 mb-4">
-                Başarı Oranı: {totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0}%
+                Başarı Oranı: {sessionTotalQuestions > 0 ? Math.round((sessionCorrectAnswers / sessionTotalQuestions) * 100) : 0}%
               </p>
               <Button onClick={startGame} className="bg-green-600 hover:bg-green-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl">
                 Tekrar Oyna

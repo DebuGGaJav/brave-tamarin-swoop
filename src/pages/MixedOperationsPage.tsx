@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus, X, Divide, Brain } from "lucide-react";
 import ProgressTracker from "@/components/ProgressTracker";
-import { MathCharacter } from "@/components/MathCharacter";
+import { MathCharacter } from "@/components/MathCharacter"; // Hata düzeltildi
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { ScoreBoard } from "@/components/ScoreBoard";
 import { useSoundFeedback } from "@/components/SoundFeedback";
@@ -24,13 +24,13 @@ interface Question {
 const MixedOperationsPage = () => {
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState("");
-  const [feedback, setFeedback] = useState<boolean | null>(null); // null: no feedback, true: correct, false: incorrect
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [feedback, setFeedback] = useState<boolean | null>(null);
+  const [sessionCorrectAnswers, setSessionCorrectAnswers] = useState(0); // Session-specific
+  const [sessionTotalQuestions, setSessionTotalQuestions] = useState(0); // Session-specific
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
-  const [totalPoints, setTotalPoints] = useState(0);
+  const [sessionPoints, setSessionPoints] = useState(0); // Session-specific
   const [showMiniGame, setShowMiniGame] = useState(false);
 
   const generateQuestion = () => {
@@ -58,43 +58,43 @@ const MixedOperationsPage = () => {
         break;
       case "cikarma":
         num1 = Math.floor(Math.random() * maxNum) + 1;
-        num2 = Math.floor(Math.random() * num1) + 1; // Ensure num1 >= num2
+        num2 = Math.floor(Math.random() * num1) + 1;
         answer = num1 - num2;
         break;
       case "carpma":
-        num1 = Math.floor(Math.random() * (maxNum / 2)) + 1; // Keep numbers smaller for multiplication
+        num1 = Math.floor(Math.random() * (maxNum / 2)) + 1;
         num2 = Math.floor(Math.random() * (maxNum / 2)) + 1;
         answer = num1 * num2;
         break;
       case "bolme":
-        let divisorMax = Math.floor(maxNum / 2);
-        if (divisorMax < 1) divisorMax = 1; // Ensure divisor is at least 1
-        num2 = Math.floor(Math.random() * divisorMax) + 1; // Divisor
-        num1 = num2 * (Math.floor(Math.random() * (maxNum / num2)) + 1); // Dividend must be a multiple of divisor
+        let divisorMax = Math.floor(maxNum / 3);
+        if (divisorMax < 1) divisorMax = 1;
+        num2 = Math.floor(Math.random() * divisorMax) + 1;
+        num1 = num2 * (Math.floor(Math.random() * (maxNum / num2)) + 1);
         answer = num1 / num2;
         break;
       default:
-        num1 = 0; num2 = 0; answer = 0; // Should not happen
+        num1 = 0; num2 = 0; answer = 0;
     }
 
-    setCurrentQuestion({ num1, num2, operation: randomOperation, answer, image: "/images/math_character_excited.png" }); // Generic image
+    setCurrentQuestion({ num1, num2, operation: randomOperation, answer, image: "/images/math_character_excited.png" });
     setUserAnswer("");
-    setFeedback(null); // Reset feedback
+    setFeedback(null);
   };
 
   useEffect(() => {
     generateQuestion();
-  }, [difficulty]); // Regenerate question when difficulty changes
+  }, [difficulty]);
 
   const checkAnswer = () => {
     if (!currentQuestion) return;
     const correct = parseInt(userAnswer) === currentQuestion.answer;
-    setFeedback(correct); // Set feedback
-    setTotalQuestions(totalQuestions + 1);
+    setFeedback(correct);
+    setSessionTotalQuestions(prev => prev + 1);
     
     if (correct) {
-      setCorrectAnswers(correctAnswers + 1);
-      setTotalPoints(prev => prev + 10);
+      setSessionCorrectAnswers(prev => prev + 1);
+      setSessionPoints(prev => prev + 10);
       setCharacterMood("happy");
       playSuccessSound();
     } else {
@@ -104,15 +104,24 @@ const MixedOperationsPage = () => {
   };
 
   const nextQuestion = () => {
+    if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
+      (window as any).updateStudentStats(sessionCorrectAnswers, sessionTotalQuestions, sessionPoints);
+    }
     generateQuestion();
     setCharacterMood("neutral");
-    if (totalPoints >= 50 && !showMiniGame) {
+    setSessionCorrectAnswers(0); // Reset for next session
+    setSessionTotalQuestions(0); // Reset for next session
+    setSessionPoints(0); // Reset for next session
+
+    if (sessionPoints >= 50 && !showMiniGame) {
       setShowMiniGame(true);
     }
   };
 
   const handleMiniGameEnd = (gameScore: number) => {
-    setTotalPoints(prev => prev + gameScore);
+    if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
+      (window as any).updateStudentStats(0, 0, gameScore);
+    }
     setShowMiniGame(false);
   };
 
@@ -158,7 +167,7 @@ const MixedOperationsPage = () => {
           <p className="text-lg sm:text-xl text-gray-600">Tüm matematik işlemlerini bir arada çözelim!</p>
         </div>
 
-        <ScoreBoard correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
+        <ScoreBoard correctAnswers={sessionCorrectAnswers} totalQuestions={sessionTotalQuestions} />
         <DifficultySelector onSelect={setDifficulty} currentLevel={difficulty} />
 
         <Card className={`mb-4 shadow-xl border-2 ${getCardBorderColor(currentQuestion.operation)}`}>
@@ -218,11 +227,11 @@ const MixedOperationsPage = () => {
           </CardContent>
         </Card>
 
-        <ProgressTracker topic="Karışık İşlemler" correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
+        <ProgressTracker topic="Karışık İşlemler" correctAnswers={sessionCorrectAnswers} totalQuestions={sessionTotalQuestions} />
         
         <div className="mt-8 text-center">
-          <h2 className="text-xl sm:text-2xl font-bold text-purple-600">Toplam Puan: {totalPoints}</h2>
-          {totalPoints >= 50 && (
+          <h2 className="text-xl sm:text-2xl font-bold text-purple-600">Oturum Puanı: {sessionPoints}</h2>
+          {sessionPoints >= 50 && (
             <Dialog open={showMiniGame} onOpenChange={setShowMiniGame}>
               <DialogTrigger asChild>
                 <Button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg">

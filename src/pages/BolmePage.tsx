@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Divide, Star, Trophy } from "lucide-react";
@@ -15,59 +15,69 @@ const BolmePage = () => {
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
-  const [feedback, setFeedback] = useState<boolean | null>(null); // null: no feedback, true: correct, false: incorrect
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [feedback, setFeedback] = useState<boolean | null>(null);
+  const [sessionCorrectAnswers, setSessionCorrectAnswers] = useState(0); // Session-specific
+  const [sessionTotalQuestions, setSessionTotalQuestions] = useState(0); // Session-specific
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [characterMood, setCharacterMood] = useState<"happy" | "sad" | "neutral" | "excited">("neutral");
   const { playSuccessSound, playErrorSound } = useSoundFeedback();
-  const [totalPoints, setTotalPoints] = useState(0);
+  const [sessionPoints, setSessionPoints] = useState(0); // Session-specific
   const [showMiniGame, setShowMiniGame] = useState(false);
 
   const generateNumbers = () => {
     let max = difficulty === "easy" ? 10 : difficulty === "medium" ? 20 : 30;
     let n1, n2;
     do {
-      n2 = Math.floor(Math.random() * (max / 2)) + 1; // Divisor
-      n1 = n2 * (Math.floor(Math.random() * (max / n2)) + 1); // Dividend must be a multiple of divisor
-    } while (n1 === 0 || n2 === 0 || n1 / n2 > max); // Ensure valid division and result within range
+      n2 = Math.floor(Math.random() * (max / 2)) + 1;
+      n1 = n2 * (Math.floor(Math.random() * (max / n2)) + 1);
+    } while (n1 === 0 || n2 === 0 || n1 / n2 > max);
 
     setNum1(n1);
     setNum2(n2);
     setUserAnswer("");
-    setFeedback(null); // Reset feedback
+    setFeedback(null);
   };
 
   const checkAnswer = () => {
     const correct = parseInt(userAnswer) === num1 / num2;
-    setFeedback(correct); // Set feedback
-    setTotalQuestions(totalQuestions + 1);
+    setFeedback(correct);
+    setSessionTotalQuestions(prev => prev + 1);
     
     if (correct) {
-      setCorrectAnswers(correctAnswers + 1);
-      setTotalPoints(prev => prev + 10);
+      setSessionCorrectAnswers(prev => prev + 1);
+      setSessionPoints(prev => prev + 10);
       setCharacterMood("happy");
       playSuccessSound();
     } else {
       setCharacterMood("sad");
+
       playErrorSound();
     }
   };
 
   const nextQuestion = () => {
+    if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
+      (window as any).updateStudentStats(sessionCorrectAnswers, sessionTotalQuestions, sessionPoints);
+    }
     generateNumbers();
     setCharacterMood("neutral");
-    if (totalPoints >= 50 && !showMiniGame) {
+    setSessionCorrectAnswers(0); // Reset for next session
+    setSessionTotalQuestions(0); // Reset for next session
+    setSessionPoints(0); // Reset for next session
+
+    if (sessionPoints >= 50 && !showMiniGame) {
       setShowMiniGame(true);
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     generateNumbers();
-  });
+  }, [difficulty]); // Regenerate on difficulty change
 
   const handleMiniGameEnd = (gameScore: number) => {
-    setTotalPoints(prev => prev + gameScore);
+    if (typeof window !== 'undefined' && (window as any).updateStudentStats) {
+      (window as any).updateStudentStats(0, 0, gameScore);
+    }
     setShowMiniGame(false);
   };
 
@@ -79,7 +89,7 @@ const BolmePage = () => {
           <p className="text-lg sm:text-xl text-gray-600">Eğlenceli bölme öğrenelim!</p>
         </div>
 
-        <ScoreBoard correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
+        <ScoreBoard correctAnswers={sessionCorrectAnswers} totalQuestions={sessionTotalQuestions} />
         <DifficultySelector onSelect={setDifficulty} currentLevel={difficulty} />
 
         <Card className="mb-4 shadow-xl border-2 border-indigo-200">
@@ -88,7 +98,7 @@ const BolmePage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
-              <img src="/images/apple.png" alt="Apples" className="mx-auto mb-4 w-24 h-24 sm:w-32 sm:h-32 object-contain" /> {/* Placeholder image */}
+              <img src="/images/apple.png" alt="Apples" className="mx-auto mb-4 w-24 h-24 sm:w-32 sm:h-32 object-contain" />
               <div className="flex justify-center items-center space-x-3 sm:space-x-4 mb-6">
                 <div className="text-3xl sm:text-4xl font-bold text-indigo-600">{num1}</div>
                 <Divide className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600" />
@@ -136,11 +146,11 @@ const BolmePage = () => {
           </CardContent>
         </Card>
 
-        <ProgressTracker topic="Bölme" correctAnswers={correctAnswers} totalQuestions={totalQuestions} />
+        <ProgressTracker topic="Bölme" correctAnswers={sessionCorrectAnswers} totalQuestions={sessionTotalQuestions} />
         
         <div className="mt-8 text-center">
-          <h2 className="text-xl sm:text-2xl font-bold text-indigo-600">Toplam Puan: {totalPoints}</h2>
-          {totalPoints >= 50 && (
+          <h2 className="text-xl sm:text-2xl font-bold text-indigo-600">Oturum Puanı: {sessionPoints}</h2>
+          {sessionPoints >= 50 && (
             <Dialog open={showMiniGame} onOpenChange={setShowMiniGame}>
               <DialogTrigger asChild>
                 <Button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg">
