@@ -16,42 +16,54 @@ const Index = () => {
       icon: <Plus className="w-8 h-8" />,
       description: "Eğlenceli toplama işlemleri",
       path: "/toplama",
-      color: "bg-green-100 text-green-700"
+      color: "bg-gradient-to-r from-green-400 to-green-500",
+      borderColor: "border-green-400",
+      hoverColor: "hover:from-green-500 hover:to-green-600"
     },
     {
       title: "Çıkarma",
       icon: <Minus className="w-8 h-8" />,
       description: "Eğlenceli çıkarma işlemleri",
       path: "/cikarma",
-      color: "bg-red-100 text-red-700"
+      color: "bg-gradient-to-r from-red-400 to-red-500",
+      borderColor: "border-red-400",
+      hoverColor: "hover:from-red-500 hover:to-red-600"
     },
     {
       title: "Sayılar",
       icon: <Hash className="w-8 h-8" />,
       description: "Sayıları öğrenelim",
       path: "/sayilar",
-      color: "bg-blue-100 text-blue-700"
+      color: "bg-gradient-to-r from-blue-400 to-blue-500",
+      borderColor: "border-blue-400",
+      hoverColor: "hover:from-blue-500 hover:to-blue-600"
     },
     {
       title: "Şekiller",
       icon: <Shapes className="w-8 h-8" />,
       description: "Geometrik şekiller",
       path: "/sekiller",
-      color: "bg-purple-100 text-purple-700"
+      color: "bg-gradient-to-r from-purple-400 to-purple-500",
+      borderColor: "border-purple-400",
+      hoverColor: "hover:from-purple-500 hover:to-purple-600"
     },
     {
       title: "Eşitlik",
       icon: <Equal className="w-8 h-8" />,
       description: "Eşitlik kavramı",
       path: "/esitlik",
-      color: "bg-yellow-100 text-yellow-700"
+      color: "bg-gradient-to-r from-yellow-400 to-yellow-500",
+      borderColor: "border-yellow-400",
+      hoverColor: "hover:from-yellow-500 hover:to-yellow-600"
     },
     {
       title: "Problem Çözme",
       icon: <Brain className="w-8 h-8" />,
       description: "Günlük problemler",
       path: "/problem-cozme",
-      color: "bg-pink-100 text-pink-700"
+      color: "bg-gradient-to-r from-pink-400 to-pink-500",
+      borderColor: "border-pink-400",
+      hoverColor: "hover:from-pink-500 hover:to-pink-600"
     }
   ];
 
@@ -61,21 +73,27 @@ const Index = () => {
       icon: <Users className="w-8 h-8" />,
       description: "Arkadaşlarınla yarış",
       path: "/multiplayer",
-      color: "bg-indigo-100 text-indigo-700"
+      color: "bg-gradient-to-r from-indigo-400 to-indigo-500",
+      borderColor: "border-indigo-400",
+      hoverColor: "hover:from-indigo-500 hover:to-indigo-600"
     },
     {
       title: "Başarılar",
       icon: <Award className="w-8 h-8" />,
       description: "Rozetleri topla",
       path: "/achievements",
-      color: "bg-orange-100 text-orange-700"
+      color: "bg-gradient-to-r from-orange-400 to-orange-500",
+      borderColor: "border-orange-400",
+      hoverColor: "hover:from-orange-500 hover:to-orange-600"
     },
     {
       title: "Öğretmen Paneli",
       icon: <UserCheck className="w-8 h-8" />,
       description: "İlerlemeyi takip et",
       path: "/teacher",
-      color: "bg-teal-100 text-teal-700"
+      color: "bg-gradient-to-r from-teal-400 to-teal-500",
+      borderColor: "border-teal-400",
+      hoverColor: "hover:from-teal-500 hover:to-teal-600"
     }
   ];
 
@@ -88,52 +106,54 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="mb-4">
+        <div className="text-center mb-12">
+          <div className="mb-6">
             <MathCharacter 
               mood={characterMood} 
               message="Merhaba! Matematik dünyasına hoş geldin!"
             />
           </div>
           
-          <h1 className="text-4xl font-bold text-purple-600 mb-2 flex items-center justify-center">
-            <Sparkles className="w-8 h-8 mr-2 text-yellow-500" />
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 flex items-center justify-center">
+            <Sparkles className="w-10 h-10 mr-3 text-yellow-500" />
             Matematik Dünyası
-            <Sparkles className="w-8 h-8 ml-2 text-yellow-500" />
+            <Sparkles className="w-10 h-10 ml-3 text-yellow-500" />
           </h1>
-          <p className="text-xl text-gray-600 mb-4">
+          <p className="text-2xl text-gray-600 mb-6">
             1. Sınıf Matematik Eğlencesi
           </p>
           <div className="flex justify-center">
-            <Trophy className="w-8 h-8 text-yellow-500 animate-bounce" />
+            <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-4 rounded-full shadow-lg">
+              <Trophy className="w-10 h-10 text-white animate-bounce" />
+            </div>
           </div>
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-purple-600 mb-4 text-center">Matematik Konuları</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-purple-600 mb-8 text-center">Matematik Konuları</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {topics.map((topic, index) => (
               <Card 
                 key={index} 
-                className="hover:shadow-xl transition-all duration-300 bg-white border-2 border-purple-200 hover:border-purple-400 hover:scale-105 group"
+                className={`group transition-all duration-300 bg-white border-2 ${topic.borderColor} hover:shadow-2xl hover:scale-105 transform`}
               >
-                <CardHeader>
+                <CardHeader className="pb-4">
                   <div className="flex justify-center mb-4">
-                    <div className={`p-4 rounded-full ${topic.color} group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`p-4 rounded-full ${topic.color} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                       {topic.icon}
                     </div>
                   </div>
-                  <CardTitle className="text-center text-purple-700">
+                  <CardTitle className="text-center text-xl font-bold bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent">
                     {topic.title}
                   </CardTitle>
-                  <CardDescription className="text-center">
+                  <CardDescription className="text-center text-gray-600 font-medium">
                     {topic.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex justify-center">
+                <CardContent className="flex justify-center pt-0">
                   <Button 
                     onClick={() => handleStart(topic.path)}
-                    className="bg-purple-600 hover:bg-purple-700 group-hover:scale-105 transition-transform duration-300"
+                    className={`${topic.color} ${topic.hoverColor} text-white font-bold px-8 py-3 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105`}
                   >
                     Başla
                   </Button>
@@ -143,31 +163,31 @@ const Index = () => {
           </div>
         </div>
 
-        <div>
-          <h2 className="text-2xl font-bold text-purple-600 mb-4 text-center">Özel Özellikler</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-purple-600 mb-8 text-center">Özel Özellikler</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {specialFeatures.map((feature, index) => (
               <Card 
                 key={index} 
-                className="hover:shadow-xl transition-all duration-300 bg-white border-2 border-indigo-200 hover:border-indigo-400 hover:scale-105 group"
+                className={`group transition-all duration-300 bg-white border-2 ${feature.borderColor} hover:shadow-2xl hover:scale-105 transform`}
               >
-                <CardHeader>
+                <CardHeader className="pb-4">
                   <div className="flex justify-center mb-4">
-                    <div className={`p-4 rounded-full ${feature.color} group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`p-4 rounded-full ${feature.color} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                       {feature.icon}
                     </div>
                   </div>
-                  <CardTitle className="text-center text-indigo-700">
+                  <CardTitle className="text-center text-xl font-bold bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
                     {feature.title}
                   </CardTitle>
-                  <CardDescription className="text-center">
+                  <CardDescription className="text-center text-gray-600 font-medium">
                     {feature.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex justify-center">
+                <CardContent className="flex justify-center pt-0">
                   <Button 
                     onClick={() => handleStart(feature.path)}
-                    className="bg-indigo-600 hover:bg-indigo-700 group-hover:scale-105 transition-transform duration-300"
+                    className={`${feature.color} ${feature.hoverColor} text-white font-bold px-8 py-3 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105`}
                   >
                     Keşfet
                   </Button>
@@ -177,10 +197,19 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="mt-8 text-center">
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-bold text-purple-600 mb-2">Bugünün Hedefi</h3>
-            <p className="text-gray-600">5 doğru cevap = 1 yıldız kazanırsın!</p>
+        <div className="text-center">
+          <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl shadow-2xl p-8 text-white">
+            <h3 className="text-2xl font-bold mb-3">Bugünün Hedefi</h3>
+            <p className="text-lg opacity-90">5 doğru cevap = 1 yıldız kazanırsın!</p>
+            <div className="flex justify-center mt-4">
+              <div className="flex space-x-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <div key={star} className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold">★</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

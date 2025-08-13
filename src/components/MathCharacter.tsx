@@ -26,21 +26,40 @@ export const MathCharacter = ({ mood, message }: MathCharacterProps) => {
 
   const getCharacterColor = () => {
     switch (mood) {
-      case "happy": return "text-green-500";
-      case "sad": return "text-red-500";
-      case "excited": return "text-yellow-500";
-      default: return "text-blue-500";
+      case "happy": return "from-green-400 to-green-500";
+      case "sad": return "from-red-400 to-red-500";
+      case "excited": return "from-yellow-400 to-yellow-500";
+      default: return "from-blue-400 to-blue-500";
+    }
+  };
+
+  const getCharacterIcon = () => {
+    switch (mood) {
+      case "happy": return <ThumbsUp className="w-6 h-6 text-white" />;
+      case "sad": return <ThumbsDown className="w-6 h-6 text-white" />;
+      case "excited": return <Star className="w-6 h-6 text-white" />;
+      default: return <Heart className="w-6 h-6 text-white" />;
     }
   };
 
   return (
-    <div className={`text-center transition-transform duration-500 ${isAnimating ? 'scale-110' : 'scale-100'}`}>
-      <div className={`text-6xl mb-2 ${getCharacterColor()}`}>
-        {getCharacterEmoji()}
+    <div className={`text-center transition-all duration-500 ${isAnimating ? 'scale-110' : 'scale-100'}`}>
+      <div className="relative inline-block">
+        <div className={`text-8xl mb-4 bg-gradient-to-r ${getCharacterColor()} bg-clip-text text-transparent`}>
+          {getCharacterEmoji()}
+        </div>
+        <div className="absolute -top-2 -right-2">
+          <div className={`p-2 rounded-full bg-gradient-to-r ${getCharacterColor()} shadow-lg`}>
+            {getCharacterIcon()}
+          </div>
+        </div>
       </div>
       {message && (
-        <div className="bg-white rounded-lg p-3 shadow-md max-w-xs mx-auto">
-          <p className="text-sm text-gray-700">{message}</p>
+        <div className="bg-white rounded-xl shadow-xl p-4 max-w-xs mx-auto border-2 border-purple-200">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <p className="text-sm text-gray-700 font-medium">{message}</p>
+          </div>
         </div>
       )}
     </div>
