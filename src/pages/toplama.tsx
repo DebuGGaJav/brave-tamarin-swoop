@@ -84,6 +84,7 @@ const ToplamaPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
+              <img src="/images/apple.png" alt="Apples" className="mx-auto mb-4 w-32 h-32 object-contain" />
               <div className="flex justify-center items-center space-x-4 mb-6">
                 <div className="text-4xl font-bold text-blue-600">{num1}</div>
                 <Plus className="w-8 h-8 text-purple-600" />

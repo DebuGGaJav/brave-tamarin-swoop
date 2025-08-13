@@ -14,10 +14,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 interface Problem {
   question: string;
   answer: number;
+  image?: string; // Added image property
 }
 
 const ProblemCozmePage = () => {
-  const [currentProblem, setCurrentProblem] = useState(0);
+  const [currentProblemIndex, setCurrentProblemIndex] = useState(0); // Renamed to avoid conflict
   const [userAnswer, setUserAnswer] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -33,27 +34,32 @@ const ProblemCozmePage = () => {
     {
       question: "Ali'nin 3 elması var. Ayşe 2 elma daha verdi. Ali'nin kaç elması var?",
       answer: 5,
+      image: "/images/apple.png"
     },
     {
       question: "Sınıfta 4 kız öğrenci var. 2 erkek öğrenci daha geldi. Kaç öğrenci var?",
       answer: 6,
+      image: "/images/students.png" // Assuming you'll add a students image
     },
     {
       question: "5 balondan 2'si patladı. Kaç balon kaldı?",
       answer: 3,
+      image: "/images/balloons.png"
     },
     {
       question: "7 arabadan 3'ü gitti. Kaç araba kaldı?",
       answer: 4,
+      image: "/images/car.png"
     },
     {
       question: "Kutuda 8 kalem var. 3 tanesini kullandım. Kaç kalem kaldı?",
       answer: 5,
+      image: "/images/pencil.png"
     },
   ];
 
   const checkAnswer = () => {
-    const correct = parseInt(userAnswer) === problems[currentProblem].answer;
+    const correct = parseInt(userAnswer) === problems[currentProblemIndex].answer;
     setIsCorrect(correct);
     setShowResult(true);
     setTotalQuestions(totalQuestions + 1);
@@ -70,8 +76,8 @@ const ProblemCozmePage = () => {
   };
 
   const nextProblem = () => {
-    if (currentProblem < problems.length - 1) {
-      setCurrentProblem(currentProblem + 1);
+    if (currentProblemIndex < problems.length - 1) {
+      setCurrentProblemIndex(currentProblemIndex + 1);
       setUserAnswer("");
       setShowResult(false);
       setCharacterMood("neutral");
@@ -104,9 +110,16 @@ const ProblemCozmePage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
+              {problems[currentProblemIndex].image && (
+                <img 
+                  src={problems[currentProblemIndex].image} 
+                  alt="Problem illustration" 
+                  className="mx-auto mb-4 w-32 h-32 object-contain" 
+                />
+              )}
               <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
                 <p className="text-xl text-gray-700 font-semibold leading-relaxed">
-                  {problems[currentProblem].question}
+                  {problems[currentProblemIndex].question}
                 </p>
               </div>
               
@@ -140,7 +153,7 @@ const ProblemCozmePage = () => {
                     Kontrol Et
                   </Button>
                 ) : (
-                  currentProblem < problems.length - 1 && (
+                  currentProblemIndex < problems.length - 1 && (
                     <Button
                       onClick={nextProblem}
                       className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
@@ -152,7 +165,7 @@ const ProblemCozmePage = () => {
               </div>
 
               <div className="text-center mt-4 text-sm text-gray-500">
-                Problem {currentProblem + 1} / {problems.length}
+                Problem {currentProblemIndex + 1} / {problems.length}
               </div>
             </div>
           </CardContent>

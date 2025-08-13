@@ -15,12 +15,12 @@ export const MathCharacter = ({ mood, message }: MathCharacterProps) => {
     return () => clearTimeout(timer);
   }, [mood]);
 
-  const getCharacterEmoji = () => {
+  const getCharacterImage = () => {
     switch (mood) {
-      case "happy": return "😊";
-      case "sad": return "😢";
-      case "excited": return "🤩";
-      default: return "🙂";
+      case "happy": return "/images/math_character_happy.png";
+      case "sad": return "/images/math_character_sad.png";
+      case "excited": return "/images/math_character_excited.png";
+      default: return "/images/math_character_happy.png"; // Default to happy
     }
   };
 
@@ -45,9 +45,11 @@ export const MathCharacter = ({ mood, message }: MathCharacterProps) => {
   return (
     <div className={`text-center transition-all duration-500 ${isAnimating ? 'scale-110' : 'scale-100'}`}>
       <div className="relative inline-block">
-        <div className={`text-8xl mb-4 bg-gradient-to-r ${getCharacterColor()} bg-clip-text text-transparent`}>
-          {getCharacterEmoji()}
-        </div>
+        <img 
+          src={getCharacterImage()} 
+          alt="Math Character" 
+          className="w-32 h-32 object-contain mb-4"
+        />
         <div className="absolute -top-2 -right-2">
           <div className={`p-2 rounded-full bg-gradient-to-r ${getCharacterColor()} shadow-lg`}>
             {getCharacterIcon()}

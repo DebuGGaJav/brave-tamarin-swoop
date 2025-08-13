@@ -65,6 +65,7 @@ const SayilarPage = () => {
   const renderNumberDisplay = () => {
     return (
       <div className="flex justify-center flex-wrap gap-2 mb-6 max-w-md mx-auto">
+        <img src="/images/counting_fingers.png" alt="Counting Fingers" className="mx-auto mb-4 w-32 h-32 object-contain" />
         {Array.from({ length: currentNumber }, (_, i) => (
           <div key={i} className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">
             {i + 1}

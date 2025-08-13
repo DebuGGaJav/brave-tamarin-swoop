@@ -87,6 +87,7 @@ const CikarmaPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
+              <img src="/images/balloons.png" alt="Balloons" className="mx-auto mb-4 w-32 h-32 object-contain" />
               <div className="flex justify-center items-center space-x-6 mb-8">
                 <div className="bg-white rounded-xl shadow-lg p-6 min-w-[100px]">
                   <div className="text-5xl font-bold text-red-600">{num1}</div>

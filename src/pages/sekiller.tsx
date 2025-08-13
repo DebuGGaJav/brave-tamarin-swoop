@@ -142,6 +142,15 @@ const SekillerPage = () => {
     setShowMiniGame(false);
   };
 
+  const getShapeImage = (shape: string) => {
+    switch (shape) {
+      case "kare": return "/images/square.png";
+      case "daire": return "/images/circle.png";
+      case "üçgen": return "/images/triangle.png";
+      default: return "";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 p-4">
       <div className="max-w-4xl mx-auto">
@@ -159,9 +168,11 @@ const SekillerPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
-              <div className="text-8xl mb-6">
-                {currentQuestion.emoji}
-              </div>
+              {getShapeImage(currentQuestion.shape) ? (
+                <img src={getShapeImage(currentQuestion.shape)} alt={currentQuestion.shape} className="mx-auto mb-4 w-32 h-32 object-contain" />
+              ) : (
+                <div className="text-8xl mb-6">{currentQuestion.emoji}</div>
+              )}
               
               <div className="mb-4">
                 <p className="text-lg text-gray-700 mb-4">Bu şekil hangisidir?</p>

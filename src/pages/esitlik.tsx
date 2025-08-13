@@ -104,6 +104,7 @@ const EsitlikPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
+              <img src="/images/equal_balance.png" alt="Balance" className="mx-auto mb-4 w-32 h-32 object-contain" />
               <div className="flex justify-center items-center space-x-4 mb-6">
                 <div className="bg-white rounded-xl shadow-lg p-6 min-w-[80px]">
                   <div className="text-4xl font-bold text-yellow-600">{currentQuestion.leftSide}</div>
