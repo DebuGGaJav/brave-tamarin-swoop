@@ -62,7 +62,7 @@ const ToplamaPage = () => {
     // Reset session stats for the new question/round
     setCorrectAnswers(0);
     setTotalQuestions(0);
-    setSessionPoints(0);
+    // setSessionPoints(0); // DO NOT RESET sessionPoints here, let them accumulate
 
     // Mini oyunları tetikleme mantığı (bu kısım StudentProfile'dan gelen totalPoints'e göre ayarlanmalı)
     // Şimdilik sessionPoints üzerinden devam edelim, ancak gerçekte StudentProfile'daki totalPoints kullanılmalı
@@ -78,7 +78,7 @@ const ToplamaPage = () => {
 
   useEffect(() => {
     generateNumbers();
-  }, []);
+  }, [difficulty]); // Regenerate on difficulty change
 
   const handleCandyCrushEnd = (gameScore: number) => {
     if (typeof window !== 'undefined' && (window as any).updateStudentStats) {

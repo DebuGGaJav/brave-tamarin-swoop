@@ -44,7 +44,7 @@ export const StudentProfile = () => {
   const [stats, setStats] = useState<StudentStats>(() => {
     // Initial data if nothing in localStorage
     const initialStats: StudentStats = {
-      name: "Ali",
+      name: "Minnak", // Changed name to Minnak
       level: 1,
       experience: 0,
       totalQuestions: 0,
@@ -186,8 +186,8 @@ export const StudentProfile = () => {
           <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
               <div className="flex items-center space-x-4 mb-4 sm:mb-0">
-                <div className="w-20 h-20 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                  {stats.name.charAt(0)}
+                <div className="w-20 h-20 rounded-full flex items-center justify-center overflow-hidden">
+                  <img src="/images/students.png" alt="Student Avatar" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-gray-800">{stats.name}</h2>

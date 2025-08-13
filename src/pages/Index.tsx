@@ -130,16 +130,8 @@ const Index = () => {
       color: "bg-gradient-to-r from-orange-400 to-orange-500",
       borderColor: "border-orange-400",
       hoverColor: "hover:from-orange-500 hover:to-orange-600"
-    },
-    {
-      title: "Öğretmen Paneli",
-      icon: <UserCheck className="w-8 h-8" />,
-      description: "İlerlemeyi takip et",
-      path: "/teacher",
-      color: "bg-gradient-to-r from-teal-400 to-teal-500",
-      borderColor: "border-teal-400",
-      hoverColor: "hover:from-teal-500 hover:to-teal-600"
     }
+    // Removed Teacher Dashboard card
   ];
 
   const handleStart = (path: string) => {

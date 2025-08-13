@@ -103,7 +103,7 @@ const TimedChallengePage = () => {
     generateQuestion();
   };
 
-  const checkAnswer = () => {
+  const handleCheckAnswer = () => {
     if (!currentQuestion) return;
     setSessionTotalQuestions((prev) => prev + 1);
     const correct = parseInt(userAnswer) === currentQuestion.answer;
@@ -213,7 +213,7 @@ const TimedChallengePage = () => {
                     type="number"
                     value={userAnswer}
                     onChange={(e) => setUserAnswer(e.target.value)}
-                    onKeyPress={(e) => { if (e.key === 'Enter') checkAnswer(); }}
+                    onKeyPress={(e) => { if (e.key === 'Enter') handleCheckAnswer(); }}
                     className="w-24 h-12 sm:w-32 sm:h-16 text-xl sm:text-2xl text-center border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="?"
                     ref={inputRef}
@@ -239,7 +239,7 @@ const TimedChallengePage = () => {
 
                 <div className="flex justify-center space-x-4">
                   <Button
-                    onClick={checkAnswer}
+                    onClick={handleCheckAnswer}
                     className={`bg-purple-600 hover:bg-purple-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200`}
                     disabled={userAnswer === ""}
                   >

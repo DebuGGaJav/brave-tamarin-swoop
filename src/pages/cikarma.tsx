@@ -58,7 +58,7 @@ const CikarmaPage = () => {
     setCharacterMood("neutral");
     setSessionCorrectAnswers(0); // Reset for next session
     setSessionTotalQuestions(0); // Reset for next session
-    setSessionPoints(0); // Reset for next session
+    // setSessionPoints(0); // DO NOT RESET sessionPoints here, let them accumulate
 
     // Check if mini-game should be unlocked (using a placeholder for global points)
     // In a real app, you'd fetch global points from StudentProfile or context
