@@ -20,6 +20,7 @@ interface Question {
 
 const GAME_ROUNDS = 10;
 const ROUND_DURATION = 10; // seconds
+const GAME_END_DISPLAY_DURATION = 5000; // 5 saniye
 
 export default function MultiplayerGame() {
   const [players, setPlayers] = useState<Player[]>([
@@ -41,6 +42,7 @@ export default function MultiplayerGame() {
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [showGameEndSummary, setShowGameEndSummary] = useState(false); // Yeni state
 
   const generateQuestion = () => {
     const num1 = Math.floor(Math.random() * 10) + 1;
@@ -91,7 +93,12 @@ export default function MultiplayerGame() {
       }, 1500); // Geri bildirim süresi
     } else {
       setGameStarted(false); // Oyun bitti
+      setShowGameEndSummary(true); // Oyun sonu özetini göster
       showSuccess("Oyun Bitti! Sonuçlar açıklandı.");
+      // Oyun sonu özetini belirli bir süre sonra gizle
+      setTimeout(() => {
+        setShowGameEndSummary(false);
+      }, GAME_END_DISPLAY_DURATION);
     }
   };
 
@@ -128,6 +135,7 @@ export default function MultiplayerGame() {
     setPlayers(players.map(p => ({ ...p, score: 0 }))); // Skorları sıfırla
     generateQuestion();
     setTimeLeft(ROUND_DURATION);
+    setShowGameEndSummary(false); // Yeni oyun başladığında özeti gizle
   };
 
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
@@ -140,7 +148,7 @@ export default function MultiplayerGame() {
           <p className="text-lg sm:text-xl text-gray-600">Hızlı Matematik Yarışması</p>
         </div>
 
-        {!gameStarted ? (
+        {!gameStarted && !showGameEndSummary ? ( // Oyun başlamadıysa ve özet gösterilmiyorsa
           <Card className="max-w-md mx-auto shadow-xl border-2 border-purple-200">
             <CardHeader>
               <CardTitle className="text-center text-xl sm:text-2xl text-purple-600">Yarışmaya Katıl</CardTitle>
@@ -152,7 +160,7 @@ export default function MultiplayerGame() {
               </Button>
             </CardContent>
           </Card>
-        ) : (
+        ) : gameStarted ? ( // Oyun devam ediyorsa
           <div className="space-y-6">
             <Card className="shadow-xl border-2 border-purple-200">
               <CardHeader>
@@ -210,20 +218,33 @@ export default function MultiplayerGame() {
                 </Card>
               ))}
             </div>
-
-            {round === GAME_ROUNDS && !gameStarted && ( // Oyun bittiğinde bu kartı göster
-              <Card className="text-center shadow-xl border-2 border-purple-200">
-                <CardContent className="p-6 sm:p-8">
-                  <Trophy className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500 mx-auto mb-4" />
-                  <h3 className="text-2xl sm:text-3xl font-bold mb-2">Yarışma Bitti!</h3>
-                  <p className="text-lg sm:text-xl">Kazanan: {sortedPlayers[0].name} 🎉</p>
-                  <Button onClick={startGame} className="mt-6 bg-purple-600 hover:bg-purple-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl">
-                    Tekrar Oyna
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
           </div>
+        ) : ( // Oyun bitti ve özet gösteriliyor
+          <Card className="text-center shadow-xl border-2 border-purple-200">
+            <CardContent className="p-6 sm:p-8">
+              <Trophy className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500 mx-auto mb-4" />
+              <h3 className="text-2xl sm:text-3xl font-bold mb-4">Yarışma Bitti!</h3>
+              <p className="text-lg sm:text-xl mb-6">Kazanan: <span className="font-bold text-purple-600">{sortedPlayers[0].name} 🎉</span></p>
+              
+              <h4 className="text-xl font-bold mb-4">Sıralama</h4>
+              <ul className="space-y-2 mb-6">
+                {sortedPlayers.map((player, index) => (
+                  <li key={player.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg shadow-sm">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-bold text-lg">{index + 1}.</span>
+                      <span className="text-xl">{player.avatar}</span>
+                      <span className="font-medium">{player.name}</span>
+                    </div>
+                    <span className="font-bold text-purple-700">{player.score} Puan</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Button onClick={startGame} className="mt-6 bg-purple-600 hover:bg-purple-700 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl">
+                Tekrar Oyna
+              </Button>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
