@@ -14,8 +14,7 @@ import { showSuccess } from "@/utils/toast";
 
 interface ShapeQuestion {
   shape: string;
-  emoji?: string; // Emoji artık opsiyonel
-  image?: string; // Yeni görsel alanı
+  emoji: string;
   options: string[];
   correctAnswer: string;
 }
@@ -37,21 +36,18 @@ const SekillerPage = () => {
     {
       shape: "kare",
       emoji: "⬜",
-      image: "/images/square.png",
       options: ["kare", "daire", "üçgen", "dikdörtgen"],
       correctAnswer: "kare"
     },
     {
       shape: "daire",
       emoji: "⭕",
-      image: "/images/circle.png",
-      options: ["daire", "kare", "üçgen", "yamuk"],
+      options: ["daire", "kare", "üçgen", "elmas"],
       correctAnswer: "daire"
     },
     {
       shape: "üçgen",
       emoji: "🔺",
-      image: "/images/triangle.png",
       options: ["üçgen", "kare", "daire", "dikdörtgen"],
       correctAnswer: "üçgen"
     },
@@ -62,10 +58,10 @@ const SekillerPage = () => {
       correctAnswer: "dikdörtgen"
     },
     {
-      shape: "yamuk",
-      // emoji: "🔷", // Yamuk için uygun emoji yok, kaldırıldı
-      options: ["yamuk", "kare", "üçgen", "daire"],
-      correctAnswer: "yamuk"
+      shape: "elmas", // Yamuk yerine elmas
+      emoji: "🔷",
+      options: ["elmas", "kare", "üçgen", "daire"],
+      correctAnswer: "elmas"
     },
     {
       shape: "kalp",
@@ -167,17 +163,6 @@ const SekillerPage = () => {
     setShowMiniGame(false);
   };
 
-  // getShapeImage fonksiyonu artık currentQuestion.image'i kullanacak
-  // Eğer currentQuestion.image varsa onu kullan, yoksa eski mantıkla devam et
-  const renderShapeVisual = () => {
-    if (currentQuestion?.image) {
-      return <img src={currentQuestion.image} alt={currentQuestion.shape} className="mx-auto mb-4 w-24 h-24 sm:w-32 sm:h-32 object-contain" />;
-    } else if (currentQuestion?.emoji) {
-      return <div className="text-7xl sm:text-8xl mb-6">{currentQuestion.emoji}</div>;
-    }
-    return null; // Ne görsel ne de emoji varsa hiçbir şey gösterme
-  };
-
   if (!currentQuestion) {
     return <div>Yükleniyor...</div>;
   }
@@ -199,7 +184,7 @@ const SekillerPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-center mb-6">
-              {renderShapeVisual()}
+              <div className="text-7xl sm:text-8xl mb-6">{currentQuestion.emoji}</div>
               
               <div className="mb-4">
                 <p className="text-lg sm:text-xl text-gray-700 mb-4">Bu şekil hangisidir?</p>
