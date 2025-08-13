@@ -27,8 +27,8 @@ const CikarmaPage = () => {
   const [consecutiveCorrect, setConsecutiveCorrect] = useState(0); // Track consecutive correct answers
 
   const generateNumbers = () => {
-    // Sayı aralığını küçültüyoruz
-    let max = difficulty === "easy" ? 10 : difficulty === "medium" ? 15 : 25; // Max değerleri düşürüldü
+    // Sayı aralığını daha da küçültüyoruz
+    let max = difficulty === "easy" ? 8 : difficulty === "medium" ? 12 : 18; // Max değerleri daha da düşürüldü
     const n1 = Math.floor(Math.random() * max) + 1;
     const n2 = Math.floor(Math.random() * n1) + 1; // n1'den küçük veya eşit n2
     setNum1(n1);
@@ -116,16 +116,15 @@ const CikarmaPage = () => {
           <CardContent>
             <div className="text-center mb-6">
               <img src="/images/balloons.png" alt="Balloons" className="mx-auto mb-4 w-24 h-24 sm:w-32 sm:h-32 object-contain" />
-              <div className="flex justify-center items-center space-x-3 sm:space-x-4 mb-8">
-                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 min-w-[80px] sm:min-w-[100px]">
-                  <div className="text-4xl sm:text-5xl font-bold text-red-600">{num1}</div>
+              <div className="flex justify-center items-center space-x-2 sm:space-x-4 mb-8"> {/* space-x azaltıldı */}
+                <div className="bg-white rounded-xl shadow-lg p-2 sm:p-3 w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center"> {/* Boyutlar küçültüldü */}
+                  <div className="text-3xl sm:text-4xl font-bold text-red-600">{num1}</div>
                 </div>
-                {/* Eksi işareti buraya eklendi */}
-                <Minus className="w-8 h-8 sm:w-12 sm:h-12 text-red-600" />
-                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 min-w-[80px] sm:min-w-[100px]">
-                  <div className="text-4xl sm:text-5xl font-bold text-red-600">{num2}</div>
+                <Minus className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" /> {/* Eksi işareti burada */}
+                <div className="bg-white rounded-xl shadow-lg p-2 sm:p-3 w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center"> {/* Boyutlar küçültüldü */}
+                  <div className="text-3xl sm:text-4xl font-bold text-red-600">{num2}</div>
                 </div>
-                <div className="text-4xl sm:text-5xl font-bold text-gray-400">=</div>
+                <div className="text-3xl sm:text-4xl font-bold text-gray-400">=</div>
                 <input
                   type="number"
                   value={userAnswer}
